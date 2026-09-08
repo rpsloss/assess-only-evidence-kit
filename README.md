@@ -1,2 +1,49 @@
-# assess-only-evidence-kit
-Castleridge internal — RMF Assess-Only evidence kit for AI model version bumps (UNCLASSIFIED public policy language only).
+# Assess-Only Evidence Kit
+
+Castleridge Solutions internal tool for a forward-deployed cybersecurity engineer.
+
+Assemble an **AO-facing RMF Assess-Only evidence pack** for one AI model lifecycle event (`model_version_bump`). The **hosting platform holds the ATO**. The model is technology below the system level and is **incorporated** into that authorization — it does **not** receive a standalone ATO.
+
+## What you get
+
+1. Fill identity (host ATO reference, model version, hash, event rationale).
+2. Walk a 22-item checklist (10 infrastructure / 12 model) seeded from the DoD AI Cybersecurity RM Tailoring Guide (14 Jul 2025, v2) Appendix B themes.
+3. Paste evaluations and AO-negotiable performance / drift thresholds.
+4. Record residual risk and ConMon hooks (model as a versioned pipeline artifact).
+5. Export an offline zip: `pack.md`, `pack.json`, `gap_report.md`, `schema/evidence-pack.schema.json`, `/evidence/*`.
+
+Packs stay in this browser until you download them. Prefer URI pointers over attachments. Never place API keys, weights, or CUI in a pack.
+
+## Doctrine (public)
+
+- DoD Artificial Intelligence Cybersecurity Risk Management Tailoring Guide, 14 July 2025, Version 2.
+- DoDI 8510.01 — technologies below the system level use Assess Only.
+- DoD CIO cATO / DevSecOps continuous authorization guidance.
+- NIST AI RMF 1.0; forthcoming COSAIS overlays (checklist `req_id`s are overlay-ready).
+- OMB M-22-18 SBOM, as cited by the Tailoring Guide for Assess-Only evidence.
+
+Exact Appendix B table row IDs are marked `PDF-TBD`. This kit does not grant ATOs, write to eMASS, or cover DoDD 3000.09 weapons-autonomy reviews. Reciprocity applies only where Component policy allows. No real customer, contract, or ATO names.
+
+## Sample
+
+`examples/model-bump-v1/` is a sanitized supervised document-routing classifier bump (`doc-route-clf` 1.2.0 → 1.3.0) on a placeholder host enclave. Open it from the home screen as **Open sample**.
+
+## Layout
+
+```
+docs/std.md                         living STD (v0.2)
+docs/policy-map.md                  Tailoring Guide ↔ req_ids
+schema/evidence-pack.schema.json
+examples/model-bump-v1/
+src/lib/checklist.ts                overlay-ready items
+src/lib/export.ts                   zip + markdown
+```
+
+## Run locally
+
+```bash
+npm install
+npm run dev
+```
+
+Then open the printed local URL. `package-lock.json` is omitted from this snapshot — `npm install` regenerates it.
