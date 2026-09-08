@@ -1,0 +1,7 @@
+doc-route-clf 1.3.0
+algorithm: sha256
+digest: 7c9e6679c6c6b71f4e8a0c4a1b9d2e3f0a1b2c3d4e5f67890123456789abcdef
+catalog: uri://catalog/models/doc-route-clf/1.3.0
+immutable_tag: true
+prior: 1.2.0
+note: Placeholder hash for the sanitized sample pack. Not a real artifact.

@@ -1,0 +1,192 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://castleridge.local/schema/evidence-pack.schema.json",
+  "title": "Assess-Only Evidence Pack",
+  "description": "Machine record for a single AI model lifecycle event under DoD RMF Assess Only. Not an ATO. Public policy language only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "pack_id",
+    "revision",
+    "created_at",
+    "updated_at",
+    "author_role",
+    "marking",
+    "system_context",
+    "model",
+    "event",
+    "appendix_b_items",
+    "evaluations",
+    "thresholds",
+    "residual_risk",
+    "conmon_hooks"
+  ],
+  "properties": {
+    "schema_version": { "const": "0.2.0" },
+    "pack_id": { "type": "string", "minLength": 1 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "author_role": {
+      "type": "string",
+      "enum": ["ISSM", "ISSO", "cybersecurity_engineer", "model_owner", "mlops", "other"]
+    },
+    "author_name": { "type": "string" },
+    "marking": {
+      "type": "string",
+      "description": "Operator-supplied marking. Default UNCLASSIFIED. This tool does not generate CUI or classified content."
+    },
+    "system_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["system_name", "ato_id_or_ref", "boundary_notes"],
+      "properties": {
+        "system_name": { "type": "string" },
+        "ato_id_or_ref": { "type": "string" },
+        "boundary_notes": { "type": "string" },
+        "environment_notes": { "type": "string" }
+      }
+    },
+    "model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "artifact_hash"],
+      "properties": {
+        "name": { "type": "string" },
+        "task": { "type": "string" },
+        "prior_version": { "type": "string" },
+        "version": { "type": "string" },
+        "artifact_hash": { "type": "string" },
+        "hash_alg": { "type": "string" },
+        "training_data_provenance_ref": { "type": "string" },
+        "catalog_uri": { "type": "string" }
+      }
+    },
+    "event": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "rationale"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["model_version_bump", "retrain", "threshold_breach"]
+        },
+        "rationale": { "type": "string" },
+        "change_summary": { "type": "string" }
+      }
+    },
+    "appendix_b_items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["req_id", "status"],
+        "properties": {
+          "req_id": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "met", "partial", "gap", "na"]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind", "value"],
+              "properties": {
+                "id": { "type": "string" },
+                "kind": { "enum": ["uri", "file"] },
+                "value": { "type": "string" },
+                "note": { "type": "string" }
+              }
+            }
+          },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "evaluations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "dataset_ref": { "type": "string" },
+          "metrics": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "passed": { "type": ["boolean", "null"] },
+          "raw_artifact_uri": { "type": "string" }
+        }
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "required": ["performance", "drift", "reauth_trigger_notes"],
+      "properties": {
+        "negotiated": { "type": "boolean" },
+        "performance": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": { "type": "string" },
+              "operator": { "type": "string" },
+              "value": { "type": "string" },
+              "unit": { "type": "string" }
+            }
+          }
+        },
+        "drift": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": { "type": "string" },
+              "operator": { "type": "string" },
+              "value": { "type": "string" },
+              "method": { "type": "string" }
+            }
+          }
+        },
+        "reauth_trigger_notes": { "type": "string" }
+      }
+    },
+    "residual_risk": {
+      "type": "object",
+      "required": ["statement", "ao_decision"],
+      "properties": {
+        "statement": { "type": "string" },
+        "mitigations": { "type": "array", "items": { "type": "string" } },
+        "ao_decision": { "enum": ["pending", "accepted", "rejected"] },
+        "ao_decision_notes": { "type": "string" }
+      }
+    },
+    "conmon_hooks": {
+      "type": "object",
+      "properties": {
+        "what_is_monitored": { "type": "string" },
+        "alert_owner": { "type": "string" },
+        "log_source_refs": { "type": "array", "items": { "type": "string" } },
+        "cadence_notes": { "type": "string" }
+      }
+    },
+    "baseline_pack_id": { "type": ["string", "null"] },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "filename": { "type": "string" },
+          "mime": { "type": "string" },
+          "size_bytes": { "type": "integer" },
+          "data_base64": { "type": "string" }
+        }
+      }
+    }
+  }
+}

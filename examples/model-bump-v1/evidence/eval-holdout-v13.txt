@@ -1,0 +1,6 @@
+doc-route-clf 1.3.0 holdout
+dataset: uri://catalog/datasets/doc-route-v3/splits/test
+F1=0.91  precision=0.90  recall=0.92  OTHER_precision=0.86
+proposed_threshold_F1=0.88  result=pass
+AO_negotiated=false
+note: Sanitized metrics for the sample pack. Not operational data.
