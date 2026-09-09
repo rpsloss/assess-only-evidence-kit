@@ -35,9 +35,24 @@ schema/evidence-pack.schema.json
 evidence/            optional unclassified attachments
 ```
 
-## Diff
+## Commands
 
-`npm run ao-pack -- diff <prior.json|zip> <next.json|zip>` prints an AO-facing markdown diff: model identity, checklist status changes, evaluations, thresholds, residual-risk decision, and whether `next.chain.prior_pack_hash` matches the hash of `prior`.
+```bash
+npm run ao-pack -- hash <pack.json|zip>
+npm run ao-pack -- verify <pack.json|zip>
+npm run ao-pack -- brief <pack.json|zip> [prior]
+npm run ao-pack -- seal <prior> <next> [-o out.json]
+npm run ao-pack -- diff <prior> <next>
+npm run ao-pack -- chain <p1> <p2> [p3...]
+```
+
+- **verify** — identity, 22 `req_id`s, marking, chain shape, no keys/weights/CUI marking.
+- **seal** — write `chain.prior_pack_hash` from the canonical hash of prior.
+- **brief** — twenty-minute AO read (identity, evals, open items, residual risk, optional diff).
+- **diff** — field-level changes plus chain validity.
+- **chain** — walk an ordered list; each successor must hash-link the previous.
+
+Exit `1` on verify failure, `2` on a broken chain/diff link.
 
 ## Compatibility
 

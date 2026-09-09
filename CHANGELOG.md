@@ -1,5 +1,12 @@
 # Protocol changelog
 
+## 0.3.0 (commands)
+
+- `verify` — identity, checklist completeness, banned marking, no PEM/keys/weights.
+- `seal` — stamp `chain.prior_pack_hash` from a prior pack.
+- `brief` — AO twenty-minute read.
+- `chain` — walk an ordered list of packs.
+
 ## 0.3.0
 
 - Canonical `$id` at GitHub Pages (`…/schema/v0.3.0/evidence-pack.schema.json`).

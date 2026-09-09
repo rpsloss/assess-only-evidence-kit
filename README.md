@@ -23,11 +23,14 @@ The **pack** is the product. Schema `$id`:
 See [PROTOCOL.md](./PROTOCOL.md). Hash and diff two packs:
 
 ```bash
-npm run ao-pack -- hash examples/model-bump-v1/pack.json
-npm run ao-pack -- diff prior.zip next.zip
+npm run ao-pack -- hash examples/model-bump-v1/prior-1.2.0.pack.json
+npm run ao-pack -- verify examples/model-bump-v1/pack.json
+npm run ao-pack -- brief examples/model-bump-v1/pack.json examples/model-bump-v1/prior-1.2.0.pack.json
+npm run ao-pack -- diff examples/model-bump-v1/prior-1.2.0.pack.json examples/model-bump-v1/pack.json
+npm run ao-pack -- chain examples/model-bump-v1/prior-1.2.0.pack.json examples/model-bump-v1/pack.json
 ```
 
-A successor pack must set `chain.prior_pack_hash` to the canonical SHA-256 of the previous `pack.json`.
+A successor pack must set `chain.prior_pack_hash` to the canonical SHA-256 of the previous `pack.json`. `ao-pack seal` writes that link.
 
 ## Doctrine (public)
 
