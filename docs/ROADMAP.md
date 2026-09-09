@@ -10,7 +10,7 @@ A pack is an **attestation about a model lifecycle event**, bound to a model art
 
 ## Do next (compatible)
 
-1. **AO scan board first.** `status.md` is the 20-minute view. Do not bury gaps in a 22-row form. A host-level portfolio of many models is a later question.
+1. **Assembler workbench, zip for AO/SCA.** One event at a time. `status.md` is present / partial / gapped / unfinished. Do not bury work in a 22-row form.
 2. **Keep zip sidecars authoritative.** `pack.sha256` and `evidence.sha256` are the in-toto-style materials list. Do not silently Deflate; STORE keeps bytes obvious.
 3. **Conformance fixtures.** `examples/conformance/` locks failure modes. Add more as verify grows.
 4. **CI on every push.** `.github/workflows/protocol.yml` (mirrored in `docs/ci/`).

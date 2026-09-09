@@ -8,6 +8,6 @@ test("inspect of sample successor includes hash and completeness", async () => {
   const text = await renderInspect(artifact);
   assert.match(text, /pck_sample_doc_route_clf_130/);
   assert.match(text, /sha256:[a-f0-9]{64}/);
-  assert.match(text, /Export-ready \| yes/);
+  assert.match(text, /Ready for AO\/SCA \| yes/);
   assert.match(text, /VERIFY OK/);
 });

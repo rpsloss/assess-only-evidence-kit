@@ -2,8 +2,12 @@ import { CHECKLIST } from "./checklist";
 import { completeness, hasEvidence, itemById, layerLabel, statusLabel } from "./completeness";
 import type { EvidencePack, ItemStatus, Layer } from "./types";
 
-/** AO-facing buckets. Stored status stays met/partial/gap/pending/na. */
-export type BoardBucket = "present" | "subpar" | "gapped" | "unfinished";
+/**
+ * Assembler/AO scan buckets. These are the stored statuses, renamed for a scan:
+ * present = met | na, partial = partial, gapped = gap, unfinished = pending.
+ * Missing evidence is a gate, not a fourth meaning of "partial".
+ */
+export type BoardBucket = "present" | "partial" | "gapped" | "unfinished";
 
 export type BoardItem = {
   req_id: string;
@@ -25,7 +29,7 @@ export type ExportGate = {
 export type StatusBoard = {
   items: BoardItem[];
   present: BoardItem[];
-  subpar: BoardItem[];
+  partial: BoardItem[];
   gapped: BoardItem[];
   unfinished: BoardItem[];
   counts: Record<BoardBucket, number> & { total: number };
@@ -38,8 +42,8 @@ export function bucketLabel(bucket: BoardBucket): string {
   switch (bucket) {
     case "present":
       return "Present";
-    case "subpar":
-      return "Sub-par";
+    case "partial":
+      return "Partial";
     case "gapped":
       return "Gapped";
     case "unfinished":
@@ -47,17 +51,20 @@ export function bucketLabel(bucket: BoardBucket): string {
   }
 }
 
-/** Classify one checklist row for an AO scan. Met-without-evidence is sub-par, not present. */
 export function classifyItem(status: ItemStatus, evidenced: boolean): { bucket: BoardBucket; reason: string } {
   if (status === "pending") return { bucket: "unfinished", reason: "Not yet assessed." };
   if (status === "gap") return { bucket: "gapped", reason: "Explicit gap." };
   if (status === "na") return { bucket: "present", reason: "Assessed N/A." };
-  if (status === "met" && evidenced) return { bucket: "present", reason: "Met with notes or evidence." };
-  if (status === "met") return { bucket: "subpar", reason: "Marked met without notes or evidence URI." };
   if (status === "partial") {
     return {
-      bucket: "subpar",
+      bucket: "partial",
       reason: evidenced ? "Partial — residual work remains." : "Partial, and no notes or evidence URI.",
+    };
+  }
+  if (status === "met") {
+    return {
+      bucket: "present",
+      reason: evidenced ? "Met." : "Met, but no notes or evidence URI.",
     };
   }
   return { bucket: "unfinished", reason: "Not yet assessed." };
@@ -65,7 +72,7 @@ export function classifyItem(status: ItemStatus, evidenced: boolean): { bucket: 
 
 export function statusBoard(pack: EvidencePack): StatusBoard {
   const c = completeness(pack);
-  const empty = { present: 0, subpar: 0, gapped: 0, unfinished: 0 };
+  const empty = { present: 0, partial: 0, gapped: 0, unfinished: 0 };
   const by_layer: StatusBoard["by_layer"] = {
     infra: { ...empty },
     model: { ...empty },
@@ -87,7 +94,7 @@ export function statusBoard(pack: EvidencePack): StatusBoard {
     };
   });
   const present = items.filter((i) => i.bucket === "present");
-  const subpar = items.filter((i) => i.bucket === "subpar");
+  const partial = items.filter((i) => i.bucket === "partial");
   const gapped = items.filter((i) => i.bucket === "gapped");
   const unfinished = items.filter((i) => i.bucket === "unfinished");
   const gates: ExportGate[] = [
@@ -101,7 +108,7 @@ export function statusBoard(pack: EvidencePack): StatusBoard {
       id: "pending",
       ok: c.items_pending === 0,
       blocking: true,
-      label: c.items_pending === 0 ? "No unfinished (pending) items" : `${c.items_pending} unfinished item(s)`,
+      label: c.items_pending === 0 ? "No unfinished items" : `${c.items_pending} unfinished item(s)`,
     },
     {
       id: "evidence",
@@ -125,12 +132,12 @@ export function statusBoard(pack: EvidencePack): StatusBoard {
   return {
     items,
     present,
-    subpar,
+    partial,
     gapped,
     unfinished,
     counts: {
       present: present.length,
-      subpar: subpar.length,
+      partial: partial.length,
       gapped: gapped.length,
       unfinished: unfinished.length,
       total: items.length,
@@ -149,12 +156,17 @@ function row(item: BoardItem): string {
   return `| ${item.req_id} | ${item.title} | ${bucketLabel(item.bucket)} | ${statusLabel(item.status)} | ${item.reason} |`;
 }
 
-/** AO-facing scan page: gates, then 22 rows bucketed. Lives in the zip as status.md. */
+function layerCounts(layer: Layer, board: StatusBoard): string {
+  const c = board.by_layer[layer];
+  return `${c.present} present / ${c.partial} partial / ${c.gapped} gapped / ${c.unfinished} unfinished`;
+}
+
+/** Scan page for the AO/SCA zip. Assembler uses the same board in the app. */
 export function renderStatusMarkdown(pack: EvidencePack): string {
   const board = statusBoard(pack);
   const infra = board.items.filter((i) => i.layer === "infra");
   const model = board.items.filter((i) => i.layer === "model");
-  const attention = [...board.unfinished, ...board.gapped, ...board.subpar];
+  const attention = [...board.unfinished, ...board.gapped, ...board.partial];
   return [
     `# Assess-Only status board`,
     ``,
@@ -164,25 +176,25 @@ export function renderStatusMarkdown(pack: EvidencePack): string {
     `| --- | --- |`,
     `| Pack | \`${pack.pack_id}\` r${pack.revision} |`,
     `| Model | ${pack.model.name || "—"} ${pack.model.prior_version || "?"} → ${pack.model.version || "?"} |`,
-    `| Export-ready | ${board.export_ready ? "yes" : "no"} |`,
+    `| Ready for AO/SCA | ${board.export_ready ? "yes" : "no"} |`,
     `| Present | ${board.counts.present} |`,
-    `| Sub-par | ${board.counts.subpar} |`,
+    `| Partial | ${board.counts.partial} |`,
     `| Gapped | ${board.counts.gapped} |`,
     `| Unfinished | ${board.counts.unfinished} |`,
     ``,
-    `Present = met (with evidence) or N/A. Sub-par = partial, or met/partial with no notes or URI. Gapped = explicit gap. Unfinished = pending.`,
+    `Present = met or N/A. Partial = assessed, residual work remains. Gapped = explicit gap. Unfinished = pending.`,
     ``,
-    `## Why this pack is ${board.export_ready ? "ready" : "not ready"}`,
+    `## Why this pack is ${board.export_ready ? "ready for AO/SCA" : "not ready for AO/SCA"}`,
     ``,
     ...board.gates.map((g) => `- ${check(g.ok)} ${g.blocking ? "" : "(info) "}${g.label}`),
     ``,
-    `## ${layerLabel("infra")} (${board.by_layer.infra.present} present / ${board.by_layer.infra.subpar} sub-par / ${board.by_layer.infra.gapped} gapped / ${board.by_layer.infra.unfinished} unfinished)`,
+    `## ${layerLabel("infra")} (${layerCounts("infra", board)})`,
     ``,
     `| ID | Title | Board | Status | Why |`,
     `| --- | --- | --- | --- | --- |`,
     ...infra.map(row),
     ``,
-    `## ${layerLabel("model")} (${board.by_layer.model.present} present / ${board.by_layer.model.subpar} sub-par / ${board.by_layer.model.gapped} gapped / ${board.by_layer.model.unfinished} unfinished)`,
+    `## ${layerLabel("model")} (${layerCounts("model", board)})`,
     ``,
     `| ID | Title | Board | Status | Why |`,
     `| --- | --- | --- | --- | --- |`,

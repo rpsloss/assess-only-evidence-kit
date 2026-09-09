@@ -2,8 +2,8 @@
 
 ## 0.3.1 (status board)
 
-- `ao-pack status` and zip `status.md`: present / sub-par / gapped / unfinished plus export-ready gates.
-- Met-without-evidence is **sub-par**, not present.
+- `ao-pack status` and zip `status.md`: present / partial / gapped / unfinished plus ready-for-AO/SCA gates.
+- Partial is the stored `partial` status (residual work). Missing evidence is a gate, not a re-label of met.
 - Brief and inspect include board counts.
 
 ## 0.3.1 (zip + inspect + schema)

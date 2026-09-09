@@ -16,7 +16,7 @@ Canonical `$id`: `https://rpsloss.github.io/assess-only-evidence-kit/schema/v0.3
 4. Genesis packs set `chain.prior_pack_id` and `chain.prior_pack_hash` to `null`.
 5. A successor pack MUST set `chain.prior_pack_hash` to the SHA-256 of the **canonical** prior `pack.json`.
 6. Published packs are immutable. A new event is a new pack (new `pack_id`), not an overwrite.
-7. Status board buckets (derived, not stored): **present** = met-with-evidence or N/A; **sub-par** = partial, or met/partial with no notes/URI; **gapped** = explicit gap; **unfinished** = pending.
+7. Status board buckets follow stored status: **present** = met or N/A; **partial** = partial (assessed, residual work); **gapped** = explicit gap; **unfinished** = pending. Missing notes/URI on a met or partial item is an export gate, not a different bucket.
 
 ## Canonical hash
 
@@ -32,7 +32,7 @@ A zip MUST include `pack.sha256` containing that string plus a newline. Verify f
 README.txt
 pack.md              AO-facing narrative
 brief.md             twenty-minute AO read (includes canonical hash)
-status.md            present / sub-par / gapped / unfinished
+status.md            present / partial / gapped / unfinished
 pack.json            machine record (schema 0.3.0)
 pack.sha256          canonical hash of pack.json          (MUST)
 evidence.sha256      sha256 of each evidence/* file       (SHOULD)
@@ -66,7 +66,7 @@ npm run ao-pack -- chain <p1> <p2> [p3...]
 
 - **verify** — JSON Schema shape (zod), identity, 22 `req_id`s, marking, chain shape, no keys/weights/CUI marking. For zips: `pack.sha256` match, layout, `evidence.sha256` match.
 - **inspect** — hash, completeness, verify, zip layout on one page.
-- **status** — AO scan board: present / sub-par / gapped / unfinished plus export-ready gates.
+- **status** — scan board: present / partial / gapped / unfinished plus ready-for-AO/SCA gates.
 - **zip** — emit a STORE archive with the layout above.
 - **seal** — write `chain.prior_pack_hash` from the canonical hash of prior.
 - **brief** — twenty-minute AO read (identity, evals, open items, residual risk, optional diff).
