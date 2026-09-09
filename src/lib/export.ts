@@ -1,11 +1,12 @@
-import { hashPack } from "./canonical";
+import { renderBrief } from "./brief-pack";
+import { hashPack, sha256Bytes } from "./canonical";
 import { completeness } from "./completeness";
 import { EXAMPLE_EVAL_SUMMARY, EXAMPLE_HASH_MANIFEST } from "./example-pack";
 import { renderGapReport, renderPackMarkdown, renderReadmeTxt } from "./markdown";
 import { EVIDENCE_PACK_SCHEMA_JSON } from "./schema-json";
 import type { EvidencePack } from "./types";
 import { slugify } from "./utils";
-import { buildZip, downloadBlob, textBytes, type ZipEntry } from "./zip";
+import { buildZip, buildZipBytes, downloadBlob, textBytes, type ZipEntry } from "./zip";
 
 function b64ToBytes(b64: string): Uint8Array {
   const bin = atob(b64);
@@ -29,6 +30,7 @@ export function collectZipEntries(pack: EvidencePack): ZipEntry[] {
   const entries: ZipEntry[] = [
     { name: "README.txt", data: textBytes(renderReadmeTxt(pack)) },
     { name: "pack.md", data: textBytes(renderPackMarkdown(pack)) },
+    { name: "brief.md", data: textBytes(renderBrief(pack)) },
     { name: "gap_report.md", data: textBytes(renderGapReport(pack)) },
     { name: "pack.json", data: textBytes(packJson(pack)) },
     { name: "schema/evidence-pack.schema.json", data: textBytes(EVIDENCE_PACK_SCHEMA_JSON) },
@@ -56,11 +58,34 @@ export function collectZipEntries(pack: EvidencePack): ZipEntry[] {
   return entries;
 }
 
-export async function downloadPackZip(pack: EvidencePack) {
-  const entries = collectZipEntries(pack);
+export async function renderEvidenceSha256(entries: ZipEntry[]): Promise<string> {
+  const lines = ["# sha256 of evidence/* bytes. Not the pack canonical hash.", ""];
+  const files = entries
+    .filter((e) => e.name.startsWith("evidence/"))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  for (const file of files) {
+    lines.push(`${await sha256Bytes(file.data)}  ${file.name}`);
+  }
+  if (files.length === 0) lines.push("# (no evidence files)");
+  return `${lines.join("\n")}\n`;
+}
+
+/** Zip entries including pack.sha256 and evidence.sha256. */
+export async function collectPackZipEntries(pack: EvidencePack): Promise<ZipEntry[]> {
   const digest = await hashPack(pack);
+  const entries = collectZipEntries(pack).filter((e) => e.name !== "brief.md");
+  entries.push({ name: "brief.md", data: textBytes(renderBrief(pack, null, digest)) });
   entries.push({ name: "pack.sha256", data: textBytes(`${digest}\n`) });
-  const blob = buildZip(entries);
+  entries.push({ name: "evidence.sha256", data: textBytes(await renderEvidenceSha256(entries)) });
+  return entries;
+}
+
+export async function buildPackZipBytes(pack: EvidencePack): Promise<Uint8Array> {
+  return buildZipBytes(await collectPackZipEntries(pack));
+}
+
+export async function downloadPackZip(pack: EvidencePack) {
+  const blob = buildZip(await collectPackZipEntries(pack));
   downloadBlob(blob, exportFilename(pack));
 }
 

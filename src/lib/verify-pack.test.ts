@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { buildExamplePack, buildExamplePriorPack } from "./example-pack.ts";
+import { buildExamplePack, buildExamplePriorPack, hydrateExampleFiles } from "./example-pack.ts";
+import { buildPackZipBytes } from "./export.ts";
 import { sealChain } from "./pack-factory.ts";
-import { verifyPack } from "./verify-pack.ts";
+import { unzipStore } from "./unzip.ts";
+import { verifyArtifact, verifyPack } from "./verify-pack.ts";
 
 test("genesis sample verifies", () => {
   const result = verifyPack(buildExamplePriorPack());
@@ -43,4 +45,55 @@ test("weight filename fails", () => {
   const result = verifyPack(pack);
   assert.equal(result.ok, false);
   assert.ok(result.findings.some((f) => f.code === "WEIGHTS"));
+});
+
+test("emitted zip verifies including pack.sha256", async () => {
+  const pack = hydrateExampleFiles(buildExamplePriorPack());
+  const bytes = await buildPackZipBytes(pack);
+  const zip = unzipStore(bytes);
+  const raw = JSON.parse(new TextDecoder().decode(zip.get("pack.json")));
+  const result = await verifyArtifact({ path: "memory.zip", pack, raw, zip });
+  assert.equal(result.ok, true, result.findings.map((f) => `${f.code}: ${f.message}`).join("; "));
+});
+
+test("conformance fixtures fail as documented", async () => {
+  const { loadPackArtifact } = await import("./load-pack.ts");
+  const extra = loadPackArtifact("examples/conformance/extra-field.json");
+  const extraResult = await verifyArtifact(extra);
+  assert.equal(extraResult.ok, false);
+  assert.ok(extraResult.findings.some((f) => f.code === "SCHEMA"));
+
+  const banned = loadPackArtifact("examples/conformance/banned-marking.json");
+  const bannedResult = await verifyArtifact(banned);
+  assert.equal(bannedResult.ok, false);
+  assert.ok(bannedResult.findings.some((f) => f.code === "MARKING_BANNED"));
+
+  const unsealed = loadPackArtifact("examples/conformance/unsealed.json");
+  const unsealedResult = await verifyArtifact(unsealed);
+  assert.equal(unsealedResult.ok, false);
+  assert.ok(unsealedResult.findings.some((f) => f.code === "CHAIN_UNSEALED"));
+});
+
+test("tampered pack.sha256 fails verify", async () => {
+  const pack = hydrateExampleFiles(buildExamplePriorPack());
+  const bytes = await buildPackZipBytes(pack);
+  const zip = unzipStore(bytes);
+  zip.set("pack.sha256", new TextEncoder().encode("sha256:0000000000000000000000000000000000000000000000000000000000000000\n"));
+  const raw = JSON.parse(new TextDecoder().decode(zip.get("pack.json")));
+  const result = await verifyArtifact({ path: "tamper.zip", pack, raw, zip });
+  assert.equal(result.ok, false);
+  assert.ok(result.findings.some((f) => f.code === "HASH_MISMATCH"));
+});
+
+test("tampered evidence bytes fail evidence.sha256", async () => {
+  const pack = hydrateExampleFiles(buildExamplePriorPack());
+  const bytes = await buildPackZipBytes(pack);
+  const zip = unzipStore(bytes);
+  const ev = [...zip.keys()].find((k) => k.startsWith("evidence/"));
+  assert.ok(ev);
+  zip.set(ev, new TextEncoder().encode("tampered\n"));
+  const raw = JSON.parse(new TextDecoder().decode(zip.get("pack.json")));
+  const result = await verifyArtifact({ path: "tamper-ev.zip", pack, raw, zip });
+  assert.equal(result.ok, false);
+  assert.ok(result.findings.some((f) => f.code === "EVIDENCE_HASH"));
 });

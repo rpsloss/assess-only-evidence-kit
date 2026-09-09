@@ -1,6 +1,10 @@
+import { hashPack, sha256Bytes } from "./canonical";
 import { CHECKLIST } from "./checklist";
 import { completeness } from "./completeness";
+import type { PackArtifact } from "./load-pack";
+import { validatePackShape } from "./pack-shape";
 import type { EvidencePack } from "./types";
+import { ZIP_MUST, ZIP_SHOULD } from "./zip-layout";
 
 export type Finding = { level: "error" | "warning"; code: string; message: string };
 
@@ -132,6 +136,114 @@ export function verifyPack(pack: EvidencePack): VerifyResult {
     });
   }
 
+  const ok = !findings.some((f) => f.level === "error");
+  return { ok, findings };
+}
+
+function decode(bytes: Uint8Array): string {
+  return new TextDecoder().decode(bytes);
+}
+
+async function verifyZip(pack: EvidencePack, files: Map<string, Uint8Array>): Promise<Finding[]> {
+  const findings: Finding[] = [];
+  for (const name of ZIP_MUST) {
+    if (!files.has(name)) {
+      findings.push({ level: "error", code: "ZIP_LAYOUT", message: `Zip missing required ${name}.` });
+    }
+  }
+  for (const name of ZIP_SHOULD) {
+    if (!files.has(name)) {
+      findings.push({ level: "warning", code: "ZIP_LAYOUT", message: `Zip missing ${name}.` });
+    }
+  }
+
+  const claimed = files.get("pack.sha256");
+  if (claimed) {
+    const got = decode(claimed).trim();
+    const want = await hashPack(pack);
+    if (got !== want) {
+      findings.push({
+        level: "error",
+        code: "HASH_MISMATCH",
+        message: `pack.sha256 is ${got}; canonical hash is ${want}.`,
+      });
+    }
+  }
+
+  for (const file of pack.files) {
+    const safe = file.filename.replace(/[/\\]/g, "_").trim();
+    if (!safe) continue;
+    const key = `evidence/${safe}`;
+    const bytes = files.get(key);
+    if (!bytes) {
+      findings.push({
+        level: "warning",
+        code: "EVIDENCE_MISSING",
+        message: `pack.files lists ${file.filename} but zip has no ${key}.`,
+      });
+    } else if (file.size_bytes > 0 && bytes.byteLength !== file.size_bytes) {
+      findings.push({
+        level: "warning",
+        code: "EVIDENCE_SIZE",
+        message: `${key} is ${bytes.byteLength} bytes; pack says ${file.size_bytes}.`,
+      });
+    }
+  }
+
+  const man = files.get("evidence.sha256");
+  if (man) {
+    for (const line of decode(man).split("\n")) {
+      const t = line.trim();
+      if (!t || t.startsWith("#")) continue;
+      const m = t.match(/^(sha256:[a-f0-9]{64})\s+(\S+)$/);
+      if (!m) {
+        findings.push({
+          level: "error",
+          code: "EVIDENCE_MANIFEST",
+          message: `Unreadable evidence.sha256 line: ${t}`,
+        });
+        continue;
+      }
+      const hash = m[1]!;
+      const name = m[2]!;
+      const bytes = files.get(name);
+      if (!bytes) {
+        findings.push({
+          level: "error",
+          code: "EVIDENCE_MANIFEST",
+          message: `evidence.sha256 lists ${name} but zip has no such file.`,
+        });
+        continue;
+      }
+      const actual = await sha256Bytes(bytes);
+      if (actual !== hash) {
+        findings.push({
+          level: "error",
+          code: "EVIDENCE_HASH",
+          message: `${name} does not match evidence.sha256.`,
+        });
+      }
+    }
+  } else if ([...files.keys()].some((k) => k.startsWith("evidence/"))) {
+    findings.push({
+      level: "warning",
+      code: "EVIDENCE_MANIFEST",
+      message: "Zip has evidence/ but no evidence.sha256.",
+    });
+  }
+
+  return findings;
+}
+
+/** Verify a loaded JSON or zip: schema, pack rules, and zip sidecars. */
+export async function verifyArtifact(artifact: PackArtifact): Promise<VerifyResult> {
+  const findings: Finding[] = [
+    ...validatePackShape(artifact.raw),
+    ...verifyPack(artifact.pack).findings,
+  ];
+  if (artifact.zip) {
+    findings.push(...(await verifyZip(artifact.pack, artifact.zip)));
+  }
   const ok = !findings.some((f) => f.level === "error");
   return { ok, findings };
 }

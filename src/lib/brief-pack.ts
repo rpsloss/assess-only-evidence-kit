@@ -3,7 +3,7 @@ import type { PackDiff } from "./diff-pack";
 import type { EvidencePack } from "./types";
 
 /** Twenty-minute AO read: identity, gaps, residual risk, optional diff. */
-export function renderBrief(pack: EvidencePack, diff?: PackDiff | null): string {
+export function renderBrief(pack: EvidencePack, diff?: PackDiff | null, packHash?: string | null): string {
   const c = completeness(pack);
   const gaps = c.gaps
     .filter((g) => g.status === "gap" || g.status === "partial" || g.status === "pending")
@@ -43,6 +43,7 @@ export function renderBrief(pack: EvidencePack, diff?: PackDiff | null): string 
     `| | |`,
     `| --- | --- |`,
     `| Pack | \`${pack.pack_id}\` r${pack.revision} |`,
+    `| Canonical hash | \`${packHash || "run ao-pack hash"}\` |`,
     `| Host | ${pack.system_context.system_name || "—"} |`,
     `| ATO ref | ${pack.system_context.ato_id_or_ref || "—"} |`,
     `| Model | ${pack.model.name || "—"} ${pack.model.prior_version || "?"} → ${pack.model.version || "?"} |`,

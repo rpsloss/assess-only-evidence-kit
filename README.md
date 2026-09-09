@@ -10,7 +10,7 @@ Assemble an **AO-facing RMF Assess-Only evidence pack** for one AI model lifecyc
 2. Walk a 22-item checklist (10 infrastructure / 12 model) seeded from the DoD AI Cybersecurity RM Tailoring Guide (14 Jul 2025, v2) Appendix B themes.
 3. Paste evaluations and AO-negotiable performance / drift thresholds.
 4. Record residual risk and ConMon hooks (model as a versioned pipeline artifact).
-5. Export an offline zip: `pack.md`, `pack.json`, `pack.sha256`, `gap_report.md`, `schema/`, `/evidence/*`.
+5. Export an offline zip: `pack.md`, `brief.md`, `pack.json`, `pack.sha256`, `evidence.sha256`, `gap_report.md`, `schema/`, `/evidence/*`.
 
 Packs stay in this browser until you download them. Prefer URI pointers over attachments. Never place API keys, weights, or CUI in a pack.
 
@@ -20,17 +20,21 @@ The **pack** is the product. Schema `$id`:
 
 `https://rpsloss.github.io/assess-only-evidence-kit/schema/v0.3.0/evidence-pack.schema.json`
 
-See [PROTOCOL.md](./PROTOCOL.md). Hash and diff two packs:
+See [PROTOCOL.md](./PROTOCOL.md), [docs/ROADMAP.md](./docs/ROADMAP.md), and the CI recipe in [docs/ci/](./docs/ci/).
 
 ```bash
+npm test
 npm run ao-pack -- hash examples/model-bump-v1/prior-1.2.0.pack.json
 npm run ao-pack -- verify examples/model-bump-v1/pack.json
+npm run ao-pack -- inspect examples/model-bump-v1/pack.json
 npm run ao-pack -- brief examples/model-bump-v1/pack.json examples/model-bump-v1/prior-1.2.0.pack.json
+npm run ao-pack -- zip examples/model-bump-v1/pack.json -o /tmp/sample.zip
+npm run ao-pack -- verify /tmp/sample.zip
 npm run ao-pack -- diff examples/model-bump-v1/prior-1.2.0.pack.json examples/model-bump-v1/pack.json
 npm run ao-pack -- chain examples/model-bump-v1/prior-1.2.0.pack.json examples/model-bump-v1/pack.json
 ```
 
-A successor pack must set `chain.prior_pack_hash` to the canonical SHA-256 of the previous `pack.json`. `ao-pack seal` writes that link.
+A successor pack must set `chain.prior_pack_hash` to the canonical SHA-256 of the previous `pack.json`. `ao-pack seal` writes that link. `ao-pack zip` writes `pack.sha256` and `evidence.sha256`.
 
 ## Doctrine (public)
 
@@ -51,10 +55,12 @@ Exact Appendix B table row IDs are marked `PDF-TBD`. This kit does not grant ATO
 ```
 docs/std.md                         living STD (v0.2)
 docs/policy-map.md                  Tailoring Guide ↔ req_ids
+docs/ROADMAP.md                     what to add (and what not to)
 schema/v0.3.0/evidence-pack.schema.json
-PROTOCOL.md                         pack format + hash + diff
-bin/ao-pack.mjs                     hash / diff CLI
+PROTOCOL.md                         pack format + hash + zip + verify
+bin/ao-pack.mjs                     protocol CLI
 examples/model-bump-v1/
+examples/conformance/               expected verify failures
 src/lib/checklist.ts                overlay-ready items
 src/lib/export.ts                   zip + markdown
 ```

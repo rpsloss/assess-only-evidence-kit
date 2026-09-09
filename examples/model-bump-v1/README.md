@@ -9,4 +9,9 @@ Sanitized, generic, **UNCLASSIFIED**. No real organization, contract, or ATO nam
 
 Open this pack from the kit home screen (**Open sample**) to walk a realistic Assess-Only bundle: mixed met / partial / gap / n/a, proposed (not AO-accepted) thresholds, and a residual-risk statement that does **not** claim authorization.
 
-`pack.json` / `pack.md` / `gap_report.md` are produced by the kit export. Use **Open sample** then **Download evidence zip** to regenerate them from the current schema.
+`pack.json` is the machine record. Emit a review zip with:
+
+```bash
+npm run ao-pack -- zip examples/model-bump-v1/pack.json -o /tmp/doc-route-clf-1.3.0.zip
+npm run ao-pack -- inspect /tmp/doc-route-clf-1.3.0.zip
+```

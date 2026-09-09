@@ -32,11 +32,14 @@ export function canonicalJson(pack: EvidencePack): string {
   return JSON.stringify(packForHash(pack));
 }
 
-export async function hashPack(pack: EvidencePack): Promise<string> {
-  const bytes = new TextEncoder().encode(canonicalJson(pack));
-  const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
+export async function sha256Bytes(data: Uint8Array): Promise<string> {
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", data);
   const hex = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
   return `${HASH_ALG}:${hex}`;
+}
+
+export async function hashPack(pack: EvidencePack): Promise<string> {
+  return sha256Bytes(new TextEncoder().encode(canonicalJson(pack)));
 }
 
 export function parseHash(value: string | null | undefined): string | null {

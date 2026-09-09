@@ -1,6 +1,9 @@
 {
-  "name": "app-builder-workspace",
+  "name": "assess-only-evidence-kit",
   "private": true,
+  "bin": {
+    "ao-pack": "bin/ao-pack.mjs"
+  },
   "sideEffects": false,
   "type": "module",
   "overrides": {

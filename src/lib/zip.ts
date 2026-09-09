@@ -36,7 +36,8 @@ function u32(n: number): Uint8Array {
 
 export type ZipEntry = { name: string; data: Uint8Array };
 
-export function buildZip(entries: ZipEntry[]): Blob {
+/** STORE (method 0) zip bytes. Shared by the browser download and `ao-pack zip`. */
+export function buildZipBytes(entries: ZipEntry[]): Uint8Array {
   const encoder = new TextEncoder();
   const locals: Uint8Array[] = [];
   const centrals: Uint8Array[] = [];
@@ -104,7 +105,11 @@ export function buildZip(entries: ZipEntry[]): Blob {
     u16(0),
   ]);
 
-  const bytes = concat([...locals, centralDir, eocd]);
+  return concat([...locals, centralDir, eocd]);
+}
+
+export function buildZip(entries: ZipEntry[]): Blob {
+  const bytes = buildZipBytes(entries);
   const copy = new ArrayBuffer(bytes.byteLength);
   new Uint8Array(copy).set(bytes);
   return new Blob([copy], { type: "application/zip" });
