@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { bumpFromBaseline, clonePack, createBlankPack } from "./pack-factory";
+import { bumpFromBaseline, clonePack, createBlankPack, sealChain } from "./pack-factory";
 import { buildExamplePack, hydrateExampleFiles } from "./example-pack";
 import { parsePackJson } from "./parse-pack";
 import type { EvidencePack } from "./types";
@@ -82,9 +82,10 @@ export const usePackStore = create<PackState>()((set, get) => ({
   bumpFrom: (packId) => {
     const prior = get().packs[packId];
     if (!prior) return { error: "Pack not found." };
-    const next = bumpFromBaseline(prior);
-    get().upsert(next);
-    return next;
+    const drafted = bumpFromBaseline(prior);
+    get().upsert(drafted);
+    void sealChain(drafted, prior).then((sealed) => get().upsert(sealed));
+    return drafted;
   },
 }));
 

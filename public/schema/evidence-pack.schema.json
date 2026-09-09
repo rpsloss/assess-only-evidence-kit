@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://castleridge.local/schema/evidence-pack.schema.json",
+  "$id": "https://rpsloss.github.io/assess-only-evidence-kit/schema/v0.3.0/evidence-pack.schema.json",
   "title": "Assess-Only Evidence Pack",
-  "description": "Machine record for a single AI model lifecycle event under DoD RMF Assess Only. Not an ATO. Public policy language only.",
+  "description": "Machine record for a single AI model lifecycle event under DoD RMF Assess Only. Not an ATO. Packs MUST NOT contain CUI, classified data, API keys, credentials, or model weights — hashes and URI pointers only.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -16,6 +16,7 @@
     "system_context",
     "model",
     "event",
+    "chain",
     "appendix_b_items",
     "evaluations",
     "thresholds",
@@ -23,7 +24,7 @@
     "conmon_hooks"
   ],
   "properties": {
-    "schema_version": { "const": "0.2.0" },
+    "schema_version": { "const": "0.3.0" },
     "pack_id": { "type": "string", "minLength": 1 },
     "revision": { "type": "integer", "minimum": 1 },
     "created_at": { "type": "string", "format": "date-time" },
@@ -35,7 +36,7 @@
     "author_name": { "type": "string" },
     "marking": {
       "type": "string",
-      "description": "Operator-supplied marking. Default UNCLASSIFIED. This tool does not generate CUI or classified content."
+      "description": "Operator-supplied marking. Default UNCLASSIFIED. This schema does not generate CUI or classified content."
     },
     "system_context": {
       "type": "object",
@@ -74,6 +75,19 @@
         },
         "rationale": { "type": "string" },
         "change_summary": { "type": "string" }
+      }
+    },
+    "chain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["prior_pack_id", "prior_pack_hash"],
+      "description": "Hash link to the previous pack in this model's Assess-Only history. Genesis packs use nulls. prior_pack_hash is sha256 of the canonical prior pack.json (files.data_base64 omitted).",
+      "properties": {
+        "prior_pack_id": { "type": ["string", "null"] },
+        "prior_pack_hash": {
+          "type": ["string", "null"],
+          "pattern": "^(sha256:[a-f0-9]{64})?$"
+        }
       }
     },
     "appendix_b_items": {
@@ -174,7 +188,10 @@
         "cadence_notes": { "type": "string" }
       }
     },
-    "baseline_pack_id": { "type": ["string", "null"] },
+    "baseline_pack_id": {
+      "type": ["string", "null"],
+      "description": "Deprecated alias of chain.prior_pack_id. Kept so 0.2 packs round-trip. New emitters SHOULD set chain only."
+    },
     "files": {
       "type": "array",
       "items": {

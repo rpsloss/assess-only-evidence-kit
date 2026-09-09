@@ -1,3 +1,4 @@
+import { hashPack } from "./canonical";
 import { completeness } from "./completeness";
 import { EXAMPLE_EVAL_SUMMARY, EXAMPLE_HASH_MANIFEST } from "./example-pack";
 import { renderGapReport, renderPackMarkdown, renderReadmeTxt } from "./markdown";
@@ -31,6 +32,7 @@ export function collectZipEntries(pack: EvidencePack): ZipEntry[] {
     { name: "gap_report.md", data: textBytes(renderGapReport(pack)) },
     { name: "pack.json", data: textBytes(packJson(pack)) },
     { name: "schema/evidence-pack.schema.json", data: textBytes(EVIDENCE_PACK_SCHEMA_JSON) },
+    { name: "schema/v0.3.0/evidence-pack.schema.json", data: textBytes(EVIDENCE_PACK_SCHEMA_JSON) },
   ];
 
   const seen = new Set<string>();
@@ -54,8 +56,11 @@ export function collectZipEntries(pack: EvidencePack): ZipEntry[] {
   return entries;
 }
 
-export function downloadPackZip(pack: EvidencePack) {
-  const blob = buildZip(collectZipEntries(pack));
+export async function downloadPackZip(pack: EvidencePack) {
+  const entries = collectZipEntries(pack);
+  const digest = await hashPack(pack);
+  entries.push({ name: "pack.sha256", data: textBytes(`${digest}\n`) });
+  const blob = buildZip(entries);
   downloadBlob(blob, exportFilename(pack));
 }
 

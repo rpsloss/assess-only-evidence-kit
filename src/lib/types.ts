@@ -78,8 +78,13 @@ export type DriftThreshold = {
   method: string;
 };
 
+export type PackChain = {
+  prior_pack_id: string | null;
+  prior_pack_hash: string | null;
+};
+
 export type EvidencePack = {
-  schema_version: "0.2.0";
+  schema_version: "0.3.0";
   pack_id: string;
   revision: number;
   created_at: string;
@@ -128,6 +133,8 @@ export type EvidencePack = {
     log_source_refs: string[];
     cadence_notes: string;
   };
+  chain: PackChain;
+  /** @deprecated alias of chain.prior_pack_id */
   baseline_pack_id: string | null;
   files: EvidenceFile[];
 };
@@ -146,4 +153,7 @@ export type ChecklistDef = {
   threat_refs: string[];
 };
 
-export const SCHEMA_VERSION = "0.2.0" as const;
+export const SCHEMA_VERSION = "0.3.0" as const;
+export const SCHEMA_ID =
+  "https://rpsloss.github.io/assess-only-evidence-kit/schema/v0.3.0/evidence-pack.schema.json";
+export const SUPPORTED_SCHEMA_VERSIONS = ["0.2.0", "0.3.0"] as const;

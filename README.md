@@ -10,9 +10,24 @@ Assemble an **AO-facing RMF Assess-Only evidence pack** for one AI model lifecyc
 2. Walk a 22-item checklist (10 infrastructure / 12 model) seeded from the DoD AI Cybersecurity RM Tailoring Guide (14 Jul 2025, v2) Appendix B themes.
 3. Paste evaluations and AO-negotiable performance / drift thresholds.
 4. Record residual risk and ConMon hooks (model as a versioned pipeline artifact).
-5. Export an offline zip: `pack.md`, `pack.json`, `gap_report.md`, `schema/evidence-pack.schema.json`, `/evidence/*`.
+5. Export an offline zip: `pack.md`, `pack.json`, `pack.sha256`, `gap_report.md`, `schema/`, `/evidence/*`.
 
 Packs stay in this browser until you download them. Prefer URI pointers over attachments. Never place API keys, weights, or CUI in a pack.
+
+## Protocol (v0.3)
+
+The **pack** is the product. Schema `$id`:
+
+`https://rpsloss.github.io/assess-only-evidence-kit/schema/v0.3.0/evidence-pack.schema.json`
+
+See [PROTOCOL.md](./PROTOCOL.md). Hash and diff two packs:
+
+```bash
+npm run ao-pack -- hash examples/model-bump-v1/pack.json
+npm run ao-pack -- diff prior.zip next.zip
+```
+
+A successor pack must set `chain.prior_pack_hash` to the canonical SHA-256 of the previous `pack.json`.
 
 ## Doctrine (public)
 
@@ -33,7 +48,9 @@ Exact Appendix B table row IDs are marked `PDF-TBD`. This kit does not grant ATO
 ```
 docs/std.md                         living STD (v0.2)
 docs/policy-map.md                  Tailoring Guide ↔ req_ids
-schema/evidence-pack.schema.json
+schema/v0.3.0/evidence-pack.schema.json
+PROTOCOL.md                         pack format + hash + diff
+bin/ao-pack.mjs                     hash / diff CLI
 examples/model-bump-v1/
 src/lib/checklist.ts                overlay-ready items
 src/lib/export.ts                   zip + markdown

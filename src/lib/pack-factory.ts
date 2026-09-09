@@ -1,3 +1,4 @@
+import { hashPack } from "./canonical";
 import { CHECKLIST } from "./checklist";
 import { SCHEMA_VERSION, type EvidencePack, type ItemStatus } from "./types";
 import { nowIso, uid } from "./utils";
@@ -68,6 +69,7 @@ export function createBlankPack(): EvidencePack {
       log_source_refs: [""],
       cadence_notes: "",
     },
+    chain: { prior_pack_id: null, prior_pack_hash: null },
     baseline_pack_id: null,
     files: [],
   };
@@ -87,6 +89,7 @@ export function clonePack(pack: EvidencePack, opts?: { newId?: boolean }): Evide
 export function bumpFromBaseline(prior: EvidencePack): EvidencePack {
   const next = createBlankPack();
   next.baseline_pack_id = prior.pack_id;
+  next.chain = { prior_pack_id: prior.pack_id, prior_pack_hash: null };
   next.author_role = prior.author_role;
   next.author_name = prior.author_name;
   next.marking = prior.marking;
@@ -118,4 +121,16 @@ export function bumpFromBaseline(prior: EvidencePack): EvidencePack {
     };
   });
   return next;
+}
+
+/** Fill chain.prior_pack_hash from the canonical hash of `prior`. */
+export async function sealChain(next: EvidencePack, prior: EvidencePack): Promise<EvidencePack> {
+  const sealed = structuredClone(next);
+  sealed.chain = {
+    prior_pack_id: prior.pack_id,
+    prior_pack_hash: await hashPack(prior),
+  };
+  sealed.baseline_pack_id = prior.pack_id;
+  sealed.updated_at = nowIso();
+  return sealed;
 }
