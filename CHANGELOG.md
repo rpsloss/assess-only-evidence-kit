@@ -1,5 +1,10 @@
 # Protocol changelog
 
+## 0.3.1 (workbench)
+
+- Local assembler UI: home list, pack editor, status board, download zip for AO/SCA.
+- `npm run dev` is Vite on 127.0.0.1:8080. No auth, no database.
+
 ## 0.3.1 (status board)
 
 - `ao-pack status` and zip `status.md`: present / partial / gapped / unfinished plus ready-for-AO/SCA gates.

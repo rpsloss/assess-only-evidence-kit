@@ -1,0 +1,38 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@theme {
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", serif;
+  --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --color-paper: #f3efe6;
+  --color-paper-2: #ebe6db;
+  --color-ink: #1c2118;
+  --color-fg: #1c2118;
+  --color-fg-muted: #5d6456;
+  --color-rule: #c9c2b3;
+  --color-banner: #2f4a2c;
+  --color-accent: #3d5c36;
+  --color-accent-2: #c45c26;
+  --color-met: #2f6b3a;
+  --color-partial: #9a6b12;
+  --color-gap: #9b2c2c;
+  --color-pending: #6b7064;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

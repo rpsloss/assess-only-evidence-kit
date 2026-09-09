@@ -10,9 +10,9 @@ Assemble an **AO-facing RMF Assess-Only evidence pack** for one AI model lifecyc
 2. Walk a 22-item checklist (10 infrastructure / 12 model) seeded from the DoD AI Cybersecurity RM Tailoring Guide (14 Jul 2025, v2) Appendix B themes.
 3. Paste evaluations and AO-negotiable performance / drift thresholds.
 4. Record residual risk and ConMon hooks (model as a versioned pipeline artifact).
-5. Export an offline zip: `pack.md`, `brief.md`, `pack.json`, `pack.sha256`, `evidence.sha256`, `gap_report.md`, `schema/`, `/evidence/*`.
+5. Download a zip for the AO/SCA: `status.md`, `brief.md`, `pack.md`, `pack.json`, `pack.sha256`, `evidence.sha256`, `gap_report.md`, `schema/`, `/evidence/*`.
 
-Packs stay in this browser until you download them. Prefer URI pointers over attachments. Never place API keys, weights, or CUI in a pack.
+The **workbench** is for the assembler. The **zip** is the product. Packs stay in this browser until you download them. Prefer URI pointers over attachments. Never place API keys, weights, or CUI in a pack.
 
 ## Protocol (v0.3)
 
@@ -64,13 +64,18 @@ examples/model-bump-v1/
 examples/conformance/               expected verify failures
 src/lib/checklist.ts                overlay-ready items
 src/lib/export.ts                   zip + markdown
+src/components/pack-editor.tsx      assembler workbench
+src/routes/                         home + pack pages
 ```
 
-## Run locally
+## Assembler workbench
 
 ```bash
 npm install
+npm test
 npm run dev
 ```
 
-Then open [http://127.0.0.1:8080](http://127.0.0.1:8080). `npm install` regenerates `package-lock.json` when needed.
+Open [http://127.0.0.1:8080](http://127.0.0.1:8080). Create a pack or **Open sample**, walk the status board (present / partial / gapped / unfinished), then **Download pack for AO/SCA**. The server binds loopback only. No login, no database, no API keys.
+
+`ao-pack` is the same product from the command line if you already have `pack.json`.
