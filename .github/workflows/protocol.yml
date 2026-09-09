@@ -1,0 +1,32 @@
+name: protocol
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm install
+      - run: npm test
+      - run: npm run ao-pack -- verify examples/model-bump-v1/prior-1.2.0.pack.json
+      - run: npm run ao-pack -- verify examples/model-bump-v1/pack.json
+      - run: npm run ao-pack -- chain examples/model-bump-v1/prior-1.2.0.pack.json examples/model-bump-v1/pack.json
+      - run: npm run ao-pack -- zip examples/model-bump-v1/pack.json -o /tmp/sample.zip
+      - run: npm run ao-pack -- verify /tmp/sample.zip
+      - run: npm run ao-pack -- inspect /tmp/sample.zip
+      - name: Conformance fixtures must fail verify
+        run: |
+          set +e
+          npm run ao-pack -- verify examples/conformance/extra-field.json
+          test $? -eq 1
+          npm run ao-pack -- verify examples/conformance/banned-marking.json
+          test $? -eq 1
+          npm run ao-pack -- verify examples/conformance/unsealed.json
+          test $? -eq 1
