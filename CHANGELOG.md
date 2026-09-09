@@ -1,5 +1,11 @@
 # Protocol changelog
 
+## 0.3.1 (inheritance + host drop-in)
+
+- Bump stamps `inherited_from` on INF-* items. Status board and `status.md` show inherited vs this event.
+- `host_package.md` / `ao-pack host`: where the zip attaches to the host A&A package.
+- Workbench imports `.zip` or `pack.json` (STORE zip, keep pack_id unless collision).
+
 ## 0.3.1 (POA&M)
 
 - `ao-pack poam` and zip `poam.md` / `poam.csv`: one row per partial and gap for the host package.

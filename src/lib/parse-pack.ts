@@ -67,11 +67,13 @@ function mergeItems(raw: unknown): ChecklistItemState[] {
             .filter((r): r is NonNullable<typeof r> => r !== null)
         : [];
       const poam = parsePoam(rec.poam);
+      const inherited_from = str(rec.inherited_from).trim();
       byId.set(req_id, {
         req_id,
         status,
         evidence_refs: refs,
         notes: str(rec.notes),
+        ...(inherited_from ? { inherited_from } : {}),
         ...(poam ? { poam } : {}),
       });
     }

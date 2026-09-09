@@ -119,6 +119,7 @@ export function bumpFromBaseline(prior: EvidencePack): EvidencePack {
             .join(" ")
         : `Prior status ${item.status}. Re-assess for new model version.`,
       ...(isInfra && item.poam ? { poam: structuredClone(item.poam) } : {}),
+      ...(isInfra ? { inherited_from: prior.pack_id } : {}),
     };
   });
   return next;

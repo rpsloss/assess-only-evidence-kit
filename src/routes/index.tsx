@@ -18,7 +18,7 @@ function HomePage() {
   const order = usePackStore((s) => s.order);
   const createNew = usePackStore((s) => s.createNew);
   const loadExample = usePackStore((s) => s.loadExample);
-  const importJson = usePackStore((s) => s.importJson);
+  const importFile = usePackStore((s) => s.importFile);
 
   if (!hydrated) {
     return (
@@ -56,26 +56,19 @@ function HomePage() {
             Open sample
           </Button>
           <Button variant="outline" onClick={() => fileRef.current?.click()}>
-            Import pack.json
+            Import zip or pack.json
           </Button>
           <input
             ref={fileRef}
             type="file"
-            accept="application/json,.json"
+            accept=".zip,.json,application/zip,application/json"
             className="hidden"
             onChange={async (e) => {
               const file = e.target.files?.[0];
               e.target.value = "";
               if (!file) return;
-              const text = await file.text();
-              let raw: unknown;
-              try {
-                raw = JSON.parse(text);
-              } catch {
-                window.alert("File is not valid JSON.");
-                return;
-              }
-              const result = importJson(raw, true);
+              const buf = new Uint8Array(await file.arrayBuffer());
+              const result = importFile(buf, file.name);
               if ("error" in result) {
                 window.alert(result.error);
                 return;

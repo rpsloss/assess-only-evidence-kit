@@ -10,7 +10,7 @@ Assemble an **AO-facing RMF Assess-Only evidence pack** for one AI model lifecyc
 2. Walk a 22-item checklist (10 infrastructure / 12 model) seeded from the DoD AI Cybersecurity RM Tailoring Guide (14 Jul 2025, v2) Appendix B themes.
 3. Paste evaluations and AO-negotiable performance / drift thresholds.
 4. Record residual risk and ConMon hooks (model as a versioned pipeline artifact).
-5. Download a zip for the AO/SCA: `status.md`, `poam.md`, `poam.csv`, `brief.md`, `pack.md`, `pack.json`, `pack.sha256`, `evidence.sha256`, `gap_report.md`, `schema/`, `/evidence/*`.
+5. Download a zip for the AO/SCA: `status.md`, `host_package.md`, `poam.md`, `poam.csv`, `brief.md`, `pack.md`, `pack.json`, `pack.sha256`, `evidence.sha256`, `gap_report.md`, `schema/`, `/evidence/*`.
 
 The **workbench** is for the assembler. The **zip** is the product. Packs stay in this browser until you download them. Prefer URI pointers over attachments. Never place API keys, weights, or CUI in a pack.
 
@@ -29,6 +29,7 @@ npm run ao-pack -- verify examples/model-bump-v1/pack.json
 npm run ao-pack -- inspect examples/model-bump-v1/pack.json
 npm run ao-pack -- status examples/model-bump-v1/pack.json
 npm run ao-pack -- poam examples/model-bump-v1/pack.json
+npm run ao-pack -- host examples/model-bump-v1/pack.json
 npm run ao-pack -- brief examples/model-bump-v1/pack.json examples/model-bump-v1/prior-1.2.0.pack.json
 npm run ao-pack -- zip examples/model-bump-v1/pack.json -o /tmp/sample.zip
 npm run ao-pack -- verify /tmp/sample.zip

@@ -36,6 +36,7 @@ const item = z
     status: z.enum(ITEM_STATUSES),
     evidence_refs: z.array(evidenceRef).optional(),
     notes: z.string().optional(),
+    inherited_from: z.string().optional(),
     poam: poam.optional(),
   })
   .strict();

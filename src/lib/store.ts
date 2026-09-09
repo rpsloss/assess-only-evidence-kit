@@ -3,6 +3,7 @@ import { bumpFromBaseline, clonePack, createBlankPack, sealChain } from "./pack-
 import { buildExamplePack, hydrateExampleFiles } from "./example-pack";
 import { parsePackJson } from "./parse-pack";
 import type { EvidencePack } from "./types";
+import { unzipStore } from "./unzip";
 import { nowIso } from "./utils";
 
 const STORAGE_KEY = "ao-kit-packs-v1";
@@ -19,6 +20,7 @@ type PackState = {
   createNew: () => EvidencePack;
   loadExample: () => EvidencePack;
   importJson: (raw: unknown, asNew?: boolean) => { pack: EvidencePack } | { error: string };
+  importFile: (buf: Uint8Array, filename: string) => { pack: EvidencePack } | { error: string };
   bumpFrom: (packId: string) => EvidencePack | { error: string };
 };
 
@@ -76,6 +78,28 @@ export const usePackStore = create<PackState>()((set, get) => ({
     if (!parsed.ok) return { error: parsed.error };
     let pack = parsed.pack;
     if (asNew) pack = clonePack(pack, { newId: true });
+    get().upsert(pack);
+    return { pack };
+  },
+  importFile: (buf, filename) => {
+    const lower = filename.toLowerCase();
+    let text: string;
+    try {
+      if (lower.endsWith(".zip")) {
+        const zip = unzipStore(buf);
+        const rawJson = zip.get("pack.json");
+        if (!rawJson) return { error: "ZIP is missing pack.json." };
+        text = new TextDecoder().decode(rawJson);
+      } else {
+        text = new TextDecoder().decode(buf);
+      }
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : "Could not read file." };
+    }
+    const parsed = parsePackJson(text);
+    if (!parsed.ok) return { error: parsed.error };
+    let pack = parsed.pack;
+    if (get().packs[pack.pack_id]) pack = clonePack(pack, { newId: true });
     get().upsert(pack);
     return { pack };
   },

@@ -17,6 +17,8 @@ export type BoardItem = {
   bucket: BoardBucket;
   has_evidence: boolean;
   reason: string;
+  origin: "inherited" | "this_event";
+  inherited_from: string | null;
 };
 
 export type ExportGate = {
@@ -36,6 +38,8 @@ export type StatusBoard = {
   by_layer: Record<Layer, Record<BoardBucket, number>>;
   gates: ExportGate[];
   export_ready: boolean;
+  inherited: BoardItem[];
+  this_event: BoardItem[];
 };
 
 export function bucketLabel(bucket: BoardBucket): string {
@@ -82,6 +86,7 @@ export function statusBoard(pack: EvidencePack): StatusBoard {
     const status = state?.status ?? "pending";
     const evidenced = state ? hasEvidence(state) : false;
     const { bucket, reason } = classifyItem(status, evidenced);
+    const inherited_from = state?.inherited_from?.trim() || null;
     by_layer[def.layer][bucket] += 1;
     return {
       req_id: def.req_id,
@@ -91,12 +96,16 @@ export function statusBoard(pack: EvidencePack): StatusBoard {
       bucket,
       has_evidence: evidenced,
       reason,
+      origin: inherited_from ? "inherited" : "this_event",
+      inherited_from,
     };
   });
   const present = items.filter((i) => i.bucket === "present");
   const partial = items.filter((i) => i.bucket === "partial");
   const gapped = items.filter((i) => i.bucket === "gapped");
   const unfinished = items.filter((i) => i.bucket === "unfinished");
+  const inherited = items.filter((i) => i.origin === "inherited");
+  const this_event = items.filter((i) => i.origin === "this_event");
   const gates: ExportGate[] = [
     {
       id: "identity",
@@ -145,6 +154,8 @@ export function statusBoard(pack: EvidencePack): StatusBoard {
     by_layer,
     gates,
     export_ready: c.export_ready,
+    inherited,
+    this_event,
   };
 }
 
@@ -153,7 +164,8 @@ function check(ok: boolean): string {
 }
 
 function row(item: BoardItem): string {
-  return `| ${item.req_id} | ${item.title} | ${bucketLabel(item.bucket)} | ${statusLabel(item.status)} | ${item.reason} |`;
+  const origin = item.origin === "inherited" ? `inherited (${item.inherited_from})` : "this event";
+  return `| ${item.req_id} | ${item.title} | ${bucketLabel(item.bucket)} | ${statusLabel(item.status)} | ${origin} | ${item.reason} |`;
 }
 
 function layerCounts(layer: Layer, board: StatusBoard): string {
@@ -181,8 +193,11 @@ export function renderStatusMarkdown(pack: EvidencePack): string {
     `| Partial | ${board.counts.partial} |`,
     `| Gapped | ${board.counts.gapped} |`,
     `| Unfinished | ${board.counts.unfinished} |`,
+    `| Inherited | ${board.inherited.length} |`,
+    `| This event | ${board.this_event.length} |`,
     ``,
     `Present = met or N/A. Partial = assessed, residual work remains. Gapped = explicit gap. Unfinished = pending.`,
+    `Inherited = carried forward from a prior pack (usually infrastructure). This event = re-assessed for this bump.`,
     ``,
     `## Why this pack is ${board.export_ready ? "ready for AO/SCA" : "not ready for AO/SCA"}`,
     ``,
@@ -190,15 +205,21 @@ export function renderStatusMarkdown(pack: EvidencePack): string {
     ``,
     `## ${layerLabel("infra")} (${layerCounts("infra", board)})`,
     ``,
-    `| ID | Title | Board | Status | Why |`,
-    `| --- | --- | --- | --- | --- |`,
+    `| ID | Title | Board | Status | Origin | Why |`,
+    `| --- | --- | --- | --- | --- | --- |`,
     ...infra.map(row),
     ``,
     `## ${layerLabel("model")} (${layerCounts("model", board)})`,
     ``,
-    `| ID | Title | Board | Status | Why |`,
-    `| --- | --- | --- | --- | --- |`,
+    `| ID | Title | Board | Status | Origin | Why |`,
+    `| --- | --- | --- | --- | --- | --- |`,
     ...model.map(row),
+    ``,
+    `## Inheritance`,
+    ``,
+    board.inherited.length
+      ? board.inherited.map((i) => `- **${i.req_id}** inherited from \`${i.inherited_from}\` (${statusLabel(i.status)}). Re-verify that the host control still holds.`).join("\n")
+      : "_No items marked inherited. This pack is a genesis event, or carry-forward was not stamped._",
     ``,
     `## Needs attention`,
     ``,

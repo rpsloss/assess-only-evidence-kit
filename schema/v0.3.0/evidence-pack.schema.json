@@ -116,6 +116,10 @@
             }
           },
           "notes": { "type": "string" },
+          "inherited_from": {
+            "type": "string",
+            "description": "Prior pack_id when this item was carried forward on a bump (typically INF-*). Omit for items re-assessed this event."
+          },
           "poam": {
             "type": "object",
             "additionalProperties": false,

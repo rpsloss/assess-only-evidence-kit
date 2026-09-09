@@ -68,6 +68,8 @@ export type ChecklistItemState = {
   notes: string;
   /** Present only for partial/gap rows the assembler has scheduled. Omitted when empty. */
   poam?: PoamEntry;
+  /** Prior pack_id if this row was carried forward on a bump. Omitted for this-event items. */
+  inherited_from?: string;
 };
 
 export type Evaluation = {

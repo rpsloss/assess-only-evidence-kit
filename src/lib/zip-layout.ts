@@ -7,6 +7,7 @@ export const ZIP_SHOULD = [
   "pack.md",
   "brief.md",
   "status.md",
+  "host_package.md",
   "poam.md",
   "poam.csv",
   "gap_report.md",

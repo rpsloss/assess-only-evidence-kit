@@ -31,7 +31,8 @@ export function StatusBoardView({
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="font-serif text-2xl">Status board</h2>
         <p className="text-sm text-fg-muted">
-          {board.export_ready ? "Ready for AO/SCA" : "Not ready for AO/SCA"} · present / partial / gapped / unfinished
+          {board.export_ready ? "Ready for AO/SCA" : "Not ready for AO/SCA"} · {board.inherited.length} inherited ·{" "}
+          {board.this_event.length} this event
         </p>
       </div>
       <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
@@ -71,12 +72,15 @@ export function StatusBoardView({
                 <button
                   key={item.req_id}
                   type="button"
-                  title={`${item.req_id} ${item.title} — ${item.reason}`}
+                  title={`${item.req_id} ${item.title} — ${item.origin === "inherited" ? "inherited" : "this event"} — ${item.reason}`}
                   className={`rounded border px-2 py-1 text-left text-xs ${BUCKET_CLASS[item.bucket]}`}
                   onClick={() => onSelect?.(item)}
                 >
                   <div className="font-medium">{item.req_id}</div>
-                  <div className="truncate opacity-80">{bucketLabel(item.bucket)}</div>
+                  <div className="truncate opacity-80">
+                    {bucketLabel(item.bucket)}
+                    {item.origin === "inherited" ? " · inh" : ""}
+                  </div>
                 </button>
               ))}
           </div>
