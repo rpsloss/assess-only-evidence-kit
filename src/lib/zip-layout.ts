@@ -6,6 +6,7 @@ export const ZIP_SHOULD = [
   "README.txt",
   "pack.md",
   "brief.md",
+  "status.md",
   "gap_report.md",
   "schema/evidence-pack.schema.json",
   "evidence.sha256",

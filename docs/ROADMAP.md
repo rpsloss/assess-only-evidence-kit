@@ -10,10 +10,11 @@ A pack is an **attestation about a model lifecycle event**, bound to a model art
 
 ## Do next (compatible)
 
-1. **Keep zip sidecars authoritative.** `pack.sha256` and `evidence.sha256` are the in-toto-style materials list. Do not silently Deflate; STORE keeps bytes obvious.
-2. **Conformance fixtures.** `examples/conformance/` locks failure modes (schema extra keys, banned marking, unsealed chain). Add more: PEM, weights filename, broken evidence hash.
-3. **CI on every push.** `.github/workflows/protocol.yml` (mirrored in `docs/ci/`). `npm test` plus `ao-pack verify` / `chain` / `zip` round-trip is how a 10-year format stays honest.
-4. **Optional `files[].sha256` in a later schema** so the machine record itself names attachment digests. Until then the zip sidecar is enough and does not require a `$id` bump.
+1. **AO scan board first.** `status.md` is the 20-minute view. Do not bury gaps in a 22-row form. A host-level portfolio of many models is a later question.
+2. **Keep zip sidecars authoritative.** `pack.sha256` and `evidence.sha256` are the in-toto-style materials list. Do not silently Deflate; STORE keeps bytes obvious.
+3. **Conformance fixtures.** `examples/conformance/` locks failure modes. Add more as verify grows.
+4. **CI on every push.** `.github/workflows/protocol.yml` (mirrored in `docs/ci/`).
+5. **Optional `files[].sha256` in a later schema** so the machine record itself names attachment digests. Until then the zip sidecar is enough and does not require a `$id` bump.
 
 ## Do later (new schema or detached files)
 

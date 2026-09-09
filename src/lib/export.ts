@@ -3,6 +3,7 @@ import { hashPack, sha256Bytes } from "./canonical";
 import { completeness } from "./completeness";
 import { EXAMPLE_EVAL_SUMMARY, EXAMPLE_HASH_MANIFEST } from "./example-pack";
 import { renderGapReport, renderPackMarkdown, renderReadmeTxt } from "./markdown";
+import { renderStatusMarkdown } from "./status-board";
 import { EVIDENCE_PACK_SCHEMA_JSON } from "./schema-json";
 import type { EvidencePack } from "./types";
 import { slugify } from "./utils";
@@ -31,6 +32,7 @@ export function collectZipEntries(pack: EvidencePack): ZipEntry[] {
     { name: "README.txt", data: textBytes(renderReadmeTxt(pack)) },
     { name: "pack.md", data: textBytes(renderPackMarkdown(pack)) },
     { name: "brief.md", data: textBytes(renderBrief(pack)) },
+    { name: "status.md", data: textBytes(renderStatusMarkdown(pack)) },
     { name: "gap_report.md", data: textBytes(renderGapReport(pack)) },
     { name: "pack.json", data: textBytes(packJson(pack)) },
     { name: "schema/evidence-pack.schema.json", data: textBytes(EVIDENCE_PACK_SCHEMA_JSON) },

@@ -40,7 +40,7 @@ const IDENTITY_FIELDS: { field: string; get: (p: EvidencePack) => string }[] = [
   { field: "event.rationale", get: (p) => p.event.rationale },
 ];
 
-function hasEvidence(item: ChecklistItemState): boolean {
+export function hasEvidence(item: ChecklistItemState): boolean {
   if (item.notes.trim().length > 0) return true;
   return item.evidence_refs.some((ref) => ref.value.trim().length > 0);
 }

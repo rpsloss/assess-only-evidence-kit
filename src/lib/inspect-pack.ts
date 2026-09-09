@@ -1,12 +1,14 @@
 import { hashPack } from "./canonical";
 import { completeness } from "./completeness";
 import type { PackArtifact } from "./load-pack";
+import { statusBoard } from "./status-board";
 import { renderVerify, verifyArtifact } from "./verify-pack";
 
 /** One-screen AO/operator inspect: identity, hash, completeness, verify, zip layout. */
 export async function renderInspect(artifact: PackArtifact): Promise<string> {
   const digest = await hashPack(artifact.pack);
   const c = completeness(artifact.pack);
+  const board = statusBoard(artifact.pack);
   const verify = await verifyArtifact(artifact);
   const layout = artifact.zip
     ? [...artifact.zip.keys()]
@@ -25,6 +27,7 @@ export async function renderInspect(artifact: PackArtifact): Promise<string> {
     `| Model | ${artifact.pack.model.name || "—"} ${artifact.pack.model.prior_version || "?"} → ${artifact.pack.model.version || "?"} |`,
     `| Canonical hash | \`${digest}\` |`,
     `| Completeness | ${c.score}% (${c.items_assessed}/${c.items_total} assessed) |`,
+    `| Board | present ${board.counts.present} · sub-par ${board.counts.subpar} · gapped ${board.counts.gapped} · unfinished ${board.counts.unfinished} |`,
     `| Export-ready | ${c.export_ready ? "yes" : "no"} |`,
     `| Source | ${artifact.zip ? "zip" : "json"} |`,
     `| Prior | ${artifact.pack.chain.prior_pack_id ?? "genesis"} |`,

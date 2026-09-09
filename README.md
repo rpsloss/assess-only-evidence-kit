@@ -27,6 +27,7 @@ npm test
 npm run ao-pack -- hash examples/model-bump-v1/prior-1.2.0.pack.json
 npm run ao-pack -- verify examples/model-bump-v1/pack.json
 npm run ao-pack -- inspect examples/model-bump-v1/pack.json
+npm run ao-pack -- status examples/model-bump-v1/pack.json
 npm run ao-pack -- brief examples/model-bump-v1/pack.json examples/model-bump-v1/prior-1.2.0.pack.json
 npm run ao-pack -- zip examples/model-bump-v1/pack.json -o /tmp/sample.zip
 npm run ao-pack -- verify /tmp/sample.zip

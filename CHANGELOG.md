@@ -1,5 +1,11 @@
 # Protocol changelog
 
+## 0.3.1 (status board)
+
+- `ao-pack status` and zip `status.md`: present / sub-par / gapped / unfinished plus export-ready gates.
+- Met-without-evidence is **sub-par**, not present.
+- Brief and inspect include board counts.
+
 ## 0.3.1 (zip + inspect + schema)
 
 - `ao-pack zip` emits a STORE archive with `brief.md`, `pack.sha256`, and `evidence.sha256`.

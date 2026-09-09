@@ -1,10 +1,12 @@
 import { completeness, statusLabel } from "./completeness";
 import type { PackDiff } from "./diff-pack";
+import { statusBoard } from "./status-board";
 import type { EvidencePack } from "./types";
 
 /** Twenty-minute AO read: identity, gaps, residual risk, optional diff. */
 export function renderBrief(pack: EvidencePack, diff?: PackDiff | null, packHash?: string | null): string {
   const c = completeness(pack);
+  const board = statusBoard(pack);
   const gaps = c.gaps
     .filter((g) => g.status === "gap" || g.status === "partial" || g.status === "pending")
     .map((g) => `- **${g.req_id}** (${statusLabel(g.status)}): ${g.title}${g.notes ? ` — ${g.notes}` : ""}`);
@@ -50,6 +52,8 @@ export function renderBrief(pack: EvidencePack, diff?: PackDiff | null, packHash
     `| Artifact | \`${pack.model.artifact_hash || "—"}\` |`,
     `| Event | ${pack.event.type} |`,
     `| Completeness | ${c.score}% (${c.items_assessed}/${c.items_total} assessed) |`,
+    `| Board | present ${board.counts.present} · sub-par ${board.counts.subpar} · gapped ${board.counts.gapped} · unfinished ${board.counts.unfinished} |`,
+    `| Export-ready | ${board.export_ready ? "yes" : "no"} |`,
     `| AO decision | ${pack.residual_risk.ao_decision} |`,
     `| Prior | ${chain} |`,
     ``,
@@ -62,6 +66,8 @@ export function renderBrief(pack: EvidencePack, diff?: PackDiff | null, packHash
     `## Evaluations`,
     ``,
     evals.join("\n") || "_None._",
+    ``,
+    `See **status.md** for the 22-item scan board.`,
     ``,
     `## Open items (gap / partial / pending)`,
     ``,
