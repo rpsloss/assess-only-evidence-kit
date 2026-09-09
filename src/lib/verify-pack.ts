@@ -136,6 +136,14 @@ export function verifyPack(pack: EvidencePack): VerifyResult {
     });
   }
 
+  if (!c.export_ready) {
+    findings.push({
+      level: "warning",
+      code: "EXPORT_NOT_READY",
+      message: "Pack is not export-ready (identity, pending items, missing evidence, or residual risk).",
+    });
+  }
+
   const ok = !findings.some((f) => f.level === "error");
   return { ok, findings };
 }

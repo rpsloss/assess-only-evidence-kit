@@ -2,9 +2,16 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { buildExamplePack, buildExamplePriorPack, hydrateExampleFiles } from "./example-pack.ts";
 import { buildPackZipBytes } from "./export.ts";
-import { sealChain } from "./pack-factory.ts";
+import { createBlankPack, sealChain } from "./pack-factory.ts";
 import { unzipStore } from "./unzip.ts";
 import { verifyArtifact, verifyPack } from "./verify-pack.ts";
+
+test("blank pack is not export-ready", () => {
+  const result = verifyPack(createBlankPack());
+  assert.equal(result.ok, false);
+  assert.ok(result.findings.some((f) => f.code === "IDENTITY"));
+  assert.ok(result.findings.some((f) => f.code === "EXPORT_NOT_READY"));
+});
 
 test("genesis sample verifies", () => {
   const result = verifyPack(buildExamplePriorPack());

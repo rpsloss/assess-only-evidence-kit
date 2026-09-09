@@ -7,6 +7,8 @@
 - `verify` runs a zod shape check on raw JSON (unknown keys, enums, required `chain` on 0.3.0).
 - `inspect` prints hash, completeness, verify, and zip layout.
 - Conformance fixtures under `examples/conformance/` (schema, marking, unsealed chain, PEM marker, weights filename).
+- `verify` warns `EXPORT_NOT_READY` when identity/pending/evidence/residual gates fail.
+- `SECURITY.md` — no CUI, keys, or weights in issues or packs.
 - CI recipe at `docs/ci/protocol.yml`; live workflow at `.github/workflows/protocol.yml`.
 
 ## 0.3.0 (commands)

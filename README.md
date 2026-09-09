@@ -20,7 +20,7 @@ The **pack** is the product. Schema `$id`:
 
 `https://rpsloss.github.io/assess-only-evidence-kit/schema/v0.3.0/evidence-pack.schema.json`
 
-See [PROTOCOL.md](./PROTOCOL.md), [docs/ROADMAP.md](./docs/ROADMAP.md), and the CI recipe in [docs/ci/](./docs/ci/).
+See [PROTOCOL.md](./PROTOCOL.md), [docs/ROADMAP.md](./docs/ROADMAP.md), [SECURITY.md](./SECURITY.md), and the CI recipe in [docs/ci/](./docs/ci/).
 
 ```bash
 npm test
