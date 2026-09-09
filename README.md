@@ -1,6 +1,6 @@
 # Assess-Only Evidence Kit
 
-Castleridge Solutions internal tool for a forward-deployed cybersecurity engineer.
+**UNCLASSIFIED. Fictional sample. Not a real ATO, not CUI, not connected to eMASS.**
 
 Assemble an **AO-facing RMF Assess-Only evidence pack** for one AI model lifecycle event (`model_version_bump`). The **hosting platform holds the ATO**. The model is technology below the system level and is **incorporated** into that authorization — it does **not** receive a standalone ATO.
 
@@ -46,4 +46,4 @@ npm install
 npm run dev
 ```
 
-Then open the printed local URL. `package-lock.json` is omitted from this snapshot — `npm install` regenerates it.
+Then open [http://127.0.0.1:8080](http://127.0.0.1:8080). `npm install` regenerates `package-lock.json` when needed.

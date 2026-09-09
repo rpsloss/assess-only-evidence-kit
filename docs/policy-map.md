@@ -3,7 +3,7 @@
 **Guide:** DoD Artificial Intelligence Cybersecurity Risk Management Tailoring Guide, 14 July 2025, Version 2 (UNCLASSIFIED).  
 **Appendix B tables (public):** 1-1/1-2 Design & Develop; 2-1/2-2 Development; 3-1/3-2 Deploy & Use; 4-1/4-2 Monitoring. Each security-priority table has **Infrastructure Layer** and **AI Models** columns.
 
-Exact table *row* identifiers are **PDF-TBD**. `req_id`s below are stable Castleridge overlay IDs (COSAIS-ready). Control IDs are indicative CNSSI 1253 / NIST SP 800-53 families drawn from Appendix B themes, **not** a claim that those controls have been assessed.
+Exact table *row* identifiers are **PDF-TBD**. `req_id`s below are stable overlay IDs (COSAIS-ready). Control IDs are indicative CNSSI 1253 / NIST SP 800-53 families drawn from Appendix B themes, **not** a claim that those controls have been assessed.
 
 Quoted doctrine (paraphrase kept close to public text):
 

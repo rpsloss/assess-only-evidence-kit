@@ -1,6 +1,6 @@
 # System Technical Design — AI Assess-Only Evidence Kit (v0.2)
 
-**Owner:** Castleridge Solutions (internal build)  
+**Owner:** open sample / portfolio build  
 **Audience:** Forward-deployed engineer / ISSM-facing tooling  
 **Status:** v0.2 — recommended defaults filled; implemented as a local web kit  
 **Policy anchors (public):** DoD AI Cybersecurity Risk Management Tailoring Guide (14 Jul 2025, v2); DoDI 8510.01 RMF; DoD cATO / DevSecOps continuous authorization guidance; NIST AI RMF (AI 100-1); forthcoming NIST SP 800-53 COSAIS overlays (predictive / generative / agent / multi-agent / AI developer env)
