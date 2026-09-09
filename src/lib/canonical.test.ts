@@ -20,6 +20,20 @@ test("hash is sha256 prefixed and 64 hex chars", async () => {
   assert.match(a, /^sha256:[a-f0-9]{64}$/);
 });
 
+test("published sample hashes stay stable", async () => {
+  const { loadPackFromPath } = await import("./load-pack.ts");
+  const prior = loadPackFromPath("examples/model-bump-v1/prior-1.2.0.pack.json");
+  const next = loadPackFromPath("examples/model-bump-v1/pack.json");
+  assert.equal(
+    await hashPack(prior),
+    "sha256:f85561b3373b60d1330f6dce6f693947fd5ff38db5e15529ef76728456f6920c",
+  );
+  assert.equal(
+    await hashPack(next),
+    "sha256:c86628510825f2764ddcbe0fe9ed8be66e7f3f9ad7932471d9c0a1ee7ccb83ad",
+  );
+});
+
 test("inline file bytes do not change the pack hash", async () => {
   const pack = buildExamplePack();
   pack.created_at = "2026-01-01T00:00:00.000Z";
