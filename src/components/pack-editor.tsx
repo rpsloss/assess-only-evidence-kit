@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { renderBrief } from "@/lib/brief-pack";
 import { hashPack } from "@/lib/canonical";
 import { CHECKLIST, itemsForLayer } from "@/lib/checklist";
+import { compactPoam, collectPoamRows, emptyPoam, renderPoamCsv, renderPoamMarkdown } from "@/lib/poam";
 import { completeness, layerLabel, statusLabel } from "@/lib/completeness";
 import { downloadPackZip, downloadSingle, packJson } from "@/lib/export";
 import { renderGapReport, renderPackMarkdown } from "@/lib/markdown";
@@ -13,11 +14,14 @@ import {
   AUTHOR_ROLES,
   EVENT_TYPES,
   ITEM_STATUSES,
+  RISK_LEVELS,
   type AuthorRole,
   type EvidencePack,
   type EventType,
   type ItemStatus,
   type Layer,
+  type PoamEntry,
+  type RiskLevel,
 } from "@/lib/types";
 import { formatWhen, uid } from "@/lib/utils";
 import { StatusBoardView } from "./status-board-view";
@@ -28,7 +32,7 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 
 const MAX_FILE_BYTES = 400 * 1024;
-type Tab = "identity" | "checklist" | "evaluations" | "thresholds" | "residual" | "files";
+type Tab = "identity" | "checklist" | "evaluations" | "thresholds" | "residual" | "poam" | "files";
 
 export function PackEditor({ pack }: { pack: EvidencePack }) {
   const navigate = useNavigate();
@@ -122,6 +126,12 @@ export function PackEditor({ pack }: { pack: EvidencePack }) {
           >
             status.md
           </Button>
+          <Button
+            variant="outline"
+            onClick={() => downloadSingle("poam.md", renderPoamMarkdown(pack), "text/markdown")}
+          >
+            poam.md
+          </Button>
           <Button variant="outline" onClick={() => downloadSingle("gap_report.md", renderGapReport(pack), "text/markdown")}>
             gap_report.md
           </Button>
@@ -171,6 +181,7 @@ export function PackEditor({ pack }: { pack: EvidencePack }) {
             ["evaluations", "Evaluations"],
             ["thresholds", "Thresholds"],
             ["residual", "Residual & ConMon"],
+            ["poam", "POA&M"],
             ["files", "Files"],
           ] as const
         ).map(([id, label]) => (
@@ -198,6 +209,7 @@ export function PackEditor({ pack }: { pack: EvidencePack }) {
       {tab === "evaluations" && <EvaluationsTab pack={pack} patch={patch} />}
       {tab === "thresholds" && <ThresholdsTab pack={pack} patch={patch} />}
       {tab === "residual" && <ResidualTab pack={pack} patch={patch} />}
+      {tab === "poam" && <PoamTab pack={pack} patch={patch} />}
       {tab === "files" && <FilesTab pack={pack} patch={patch} />}
 
       <div className="flex justify-end pt-4 border-t border-rule">
@@ -783,6 +795,110 @@ function ResidualTab({
           onChange={(e) => patch((p) => { p.conmon_hooks.cadence_notes = e.target.value; })}
         />
       </Field>
+    </div>
+  );
+}
+
+function PoamTab({
+  pack,
+  patch,
+}: {
+  pack: EvidencePack;
+  patch: (mut: (next: EvidencePack) => void) => void;
+}) {
+  const rows = collectPoamRows(pack);
+
+  function patchPoam(reqId: string, mut: (entry: PoamEntry) => void) {
+    patch((p) => {
+      const item = p.appendix_b_items.find((i) => i.req_id === reqId);
+      if (!item) return;
+      const next = { ...emptyPoam(), ...item.poam };
+      mut(next);
+      const compact = compactPoam(next);
+      if (compact) item.poam = compact;
+      else delete item.poam;
+    });
+  }
+
+  if (rows.length === 0) {
+    return (
+      <p className="text-sm text-fg-muted max-w-2xl">
+        No Partial or Gap items. There is nothing to put on the host POA&M for this event. Unfinished
+        items belong on the status board until they are assessed.
+      </p>
+    );
+  }
+
+  return (
+    <div className="grid gap-4">
+      <p className="text-sm text-fg-muted max-w-3xl">
+        These rows go in the zip as <code>poam.md</code> and <code>poam.csv</code> for the host package.
+        This is not an eMASS write. Pending items are not listed.
+      </p>
+      <div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => downloadSingle("poam.csv", renderPoamCsv(pack), "text/csv")}
+        >
+          Download poam.csv
+        </Button>
+      </div>
+      {rows.map((row) => {
+        const state = pack.appendix_b_items.find((i) => i.req_id === row.req_id);
+        const poam = { ...emptyPoam(), ...state?.poam };
+        return (
+          <article key={row.req_id} className="rounded-lg border border-rule bg-white p-4 grid gap-3">
+            <div>
+              <div className="text-xs uppercase tracking-wide text-fg-muted">
+                {row.req_id} · {row.layer} · {row.status}
+              </div>
+              <h2 className="font-serif text-xl">{row.title}</h2>
+              <p className="text-sm text-fg-muted mt-1">{row.weakness}</p>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              <div className="md:col-span-2">
+                <Field label="Task">
+                  <Textarea value={poam.task} onChange={(e) => patchPoam(row.req_id, (p) => { p.task = e.target.value; })} />
+                </Field>
+              </div>
+              <Field label="Owner">
+                <Input value={poam.owner} onChange={(e) => patchPoam(row.req_id, (p) => { p.owner = e.target.value; })} />
+              </Field>
+              <Field label="Scheduled completion (YYYY-MM-DD)">
+                <Input
+                  value={poam.scheduled_date}
+                  onChange={(e) => patchPoam(row.req_id, (p) => { p.scheduled_date = e.target.value; })}
+                />
+              </Field>
+              <Field label="Resources">
+                <Input value={poam.resources} onChange={(e) => patchPoam(row.req_id, (p) => { p.resources = e.target.value; })} />
+              </Field>
+              <Field label="Milestone">
+                <Input value={poam.milestone} onChange={(e) => patchPoam(row.req_id, (p) => { p.milestone = e.target.value; })} />
+              </Field>
+              <Field label="Residual risk level">
+                <select
+                  className="h-9 rounded-md border border-rule bg-white px-2 text-sm"
+                  value={poam.residual_risk_level}
+                  onChange={(e) =>
+                    patchPoam(row.req_id, (p) => {
+                      p.residual_risk_level = e.target.value as RiskLevel | "";
+                    })
+                  }
+                >
+                  <option value="">Not set</option>
+                  {RISK_LEVELS.map((level) => (
+                    <option key={level} value={level}>
+                      {level.replaceAll("_", " ")}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+          </article>
+        );
+      })}
     </div>
   );
 }

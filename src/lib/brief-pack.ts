@@ -1,5 +1,6 @@
 import { completeness, statusLabel } from "./completeness";
 import type { PackDiff } from "./diff-pack";
+import { collectPoamRows } from "./poam";
 import { statusBoard } from "./status-board";
 import type { EvidencePack } from "./types";
 
@@ -54,6 +55,7 @@ export function renderBrief(pack: EvidencePack, diff?: PackDiff | null, packHash
     `| Completeness | ${c.score}% (${c.items_assessed}/${c.items_total} assessed) |`,
     `| Board | present ${board.counts.present} · partial ${board.counts.partial} · gapped ${board.counts.gapped} · unfinished ${board.counts.unfinished} |`,
     `| Ready for AO/SCA | ${board.export_ready ? "yes" : "no"} |`,
+    `| POA&M rows | ${collectPoamRows(pack).length} (partial + gap) |`,
     `| AO decision | ${pack.residual_risk.ao_decision} |`,
     `| Prior | ${chain} |`,
     ``,
@@ -67,7 +69,7 @@ export function renderBrief(pack: EvidencePack, diff?: PackDiff | null, packHash
     ``,
     evals.join("\n") || "_None._",
     ``,
-    `See **status.md** for the 22-item scan board.`,
+    `See **status.md** for the 22-item scan board. See **poam.md** for host-package POA&M rows.`,
     ``,
     `## Open items (gap / partial / pending)`,
     ``,

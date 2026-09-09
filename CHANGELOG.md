@@ -1,5 +1,11 @@
 # Protocol changelog
 
+## 0.3.1 (POA&M)
+
+- `ao-pack poam` and zip `poam.md` / `poam.csv`: one row per partial and gap for the host package.
+- Optional `appendix_b_items[].poam` (task, owner, resources, milestone, date, residual level). Omitted when empty so 0.3.0 sample hashes stay pinned.
+- Workbench **POA&M** tab.
+
 ## 0.3.1 (workbench)
 
 - Local assembler UI: home list, pack editor, status board, download zip for AO/SCA.

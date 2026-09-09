@@ -1,6 +1,7 @@
 import { hashPack } from "./canonical";
 import { completeness } from "./completeness";
 import type { PackArtifact } from "./load-pack";
+import { collectPoamRows } from "./poam";
 import { statusBoard } from "./status-board";
 import { renderVerify, verifyArtifact } from "./verify-pack";
 
@@ -28,6 +29,7 @@ export async function renderInspect(artifact: PackArtifact): Promise<string> {
     `| Canonical hash | \`${digest}\` |`,
     `| Completeness | ${c.score}% (${c.items_assessed}/${c.items_total} assessed) |`,
     `| Board | present ${board.counts.present} · partial ${board.counts.partial} · gapped ${board.counts.gapped} · unfinished ${board.counts.unfinished} |`,
+    `| POA&M rows | ${collectPoamRows(artifact.pack).length} |`,
     `| Ready for AO/SCA | ${c.export_ready ? "yes" : "no"} |`,
     `| Source | ${artifact.zip ? "zip" : "json"} |`,
     `| Prior | ${artifact.pack.chain.prior_pack_id ?? "genesis"} |`,

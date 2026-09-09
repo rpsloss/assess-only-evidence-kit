@@ -8,6 +8,7 @@ import { buildPackZipBytes, exportFilename, packJson } from "../src/lib/export.t
 import { renderInspect } from "../src/lib/inspect-pack.ts";
 import { loadPackArtifact, loadPackFromPath } from "../src/lib/load-pack.ts";
 import { sealChain } from "../src/lib/pack-factory.ts";
+import { renderPoamMarkdown } from "../src/lib/poam.ts";
 import { renderStatusMarkdown } from "../src/lib/status-board.ts";
 import { renderVerify, verifyArtifact } from "../src/lib/verify-pack.ts";
 
@@ -17,6 +18,7 @@ function usage() {
   npm run ao-pack -- verify <pack.json|zip>
   npm run ao-pack -- inspect <pack.json|zip>
   npm run ao-pack -- status <pack.json|zip>
+  npm run ao-pack -- poam <pack.json|zip>
   npm run ao-pack -- brief <pack.json|zip> [prior.json|zip]
   npm run ao-pack -- zip <pack.json|zip> [-o out.zip]
   npm run ao-pack -- seal <prior> <next> [-o out.json]
@@ -36,6 +38,8 @@ if (cmd === "hash" && args[1]) {
   if (!result.ok) process.exit(1);
 } else if (cmd === "status" && args[1]) {
   process.stdout.write(renderStatusMarkdown(loadPackFromPath(args[1])));
+} else if (cmd === "poam" && args[1]) {
+  process.stdout.write(renderPoamMarkdown(loadPackFromPath(args[1])));
 } else if (cmd === "inspect" && args[1]) {
   const artifact = loadPackArtifact(args[1]);
   process.stdout.write(await renderInspect(artifact));

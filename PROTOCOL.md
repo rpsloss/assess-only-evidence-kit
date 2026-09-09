@@ -17,6 +17,7 @@ Canonical `$id`: `https://rpsloss.github.io/assess-only-evidence-kit/schema/v0.3
 5. A successor pack MUST set `chain.prior_pack_hash` to the SHA-256 of the **canonical** prior `pack.json`.
 6. Published packs are immutable. A new event is a new pack (new `pack_id`), not an overwrite.
 7. Status board buckets follow stored status: **present** = met or N/A; **partial** = partial (assessed, residual work); **gapped** = explicit gap; **unfinished** = pending. Missing notes/URI on a met or partial item is an export gate, not a different bucket.
+8. Partial and gap items become host-package **POA&M** rows (`poam.md`, `poam.csv`). Pending is not a POA&M row. Optional `appendix_b_items[].poam` holds task, owner, resources, milestone, scheduled date, residual level. Omit when empty.
 
 ## Canonical hash
 
@@ -33,6 +34,8 @@ README.txt
 pack.md              AO-facing narrative
 brief.md             twenty-minute AO read (includes canonical hash)
 status.md            present / partial / gapped / unfinished
+poam.md              POA&M for partial and gap (host-package insert)
+poam.csv             same rows, spreadsheet/eMASS transcription
 pack.json            machine record (schema 0.3.0)
 pack.sha256          canonical hash of pack.json          (MUST)
 evidence.sha256      sha256 of each evidence/* file       (SHOULD)
@@ -57,6 +60,7 @@ npm run ao-pack -- hash <pack.json|zip>
 npm run ao-pack -- verify <pack.json|zip>
 npm run ao-pack -- inspect <pack.json|zip>
 npm run ao-pack -- status <pack.json|zip>
+npm run ao-pack -- poam <pack.json|zip>
 npm run ao-pack -- brief <pack.json|zip> [prior]
 npm run ao-pack -- zip <pack.json|zip> [-o out.zip]
 npm run ao-pack -- seal <prior> <next> [-o out.json]
@@ -67,6 +71,7 @@ npm run ao-pack -- chain <p1> <p2> [p3...]
 - **verify** — JSON Schema shape (zod), identity, 22 `req_id`s, marking, chain shape, no keys/weights/CUI marking. For zips: `pack.sha256` match, layout, `evidence.sha256` match.
 - **inspect** — hash, completeness, verify, zip layout on one page.
 - **status** — scan board: present / partial / gapped / unfinished plus ready-for-AO/SCA gates.
+- **poam** — Plan of Action and Milestones from partial and gap items.
 - **zip** — emit a STORE archive with the layout above.
 - **seal** — write `chain.prior_pack_hash` from the canonical hash of prior.
 - **brief** — twenty-minute AO read (identity, evals, open items, residual risk, optional diff).

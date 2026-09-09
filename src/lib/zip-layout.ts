@@ -7,6 +7,8 @@ export const ZIP_SHOULD = [
   "pack.md",
   "brief.md",
   "status.md",
+  "poam.md",
+  "poam.csv",
   "gap_report.md",
   "schema/evidence-pack.schema.json",
   "evidence.sha256",

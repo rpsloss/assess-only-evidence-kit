@@ -115,7 +115,23 @@
               }
             }
           },
-          "notes": { "type": "string" }
+          "notes": { "type": "string" },
+          "poam": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Optional Plan of Action and Milestones row for partial or gap items. Omit when empty. This is supporting evidence for the host package, not an eMASS write.",
+            "properties": {
+              "task": { "type": "string" },
+              "owner": { "type": "string" },
+              "resources": { "type": "string" },
+              "milestone": { "type": "string" },
+              "scheduled_date": { "type": "string" },
+              "residual_risk_level": {
+                "type": "string",
+                "enum": ["", "very_low", "low", "moderate", "high", "very_high"]
+              }
+            }
+          }
         }
       }
     },

@@ -12,6 +12,8 @@ test("zip contains required AO artifacts", () => {
   assert.ok(names.includes("pack.md"));
   assert.ok(names.includes("brief.md"));
   assert.ok(names.includes("status.md"));
+  assert.ok(names.includes("poam.md"));
+  assert.ok(names.includes("poam.csv"));
   assert.ok(names.includes("pack.json"));
   assert.ok(names.includes("gap_report.md"));
   assert.ok(names.includes("README.txt"));

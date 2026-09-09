@@ -30,6 +30,19 @@ export type AuthorRole = (typeof AUTHOR_ROLES)[number];
 export const AO_DECISIONS = ["pending", "accepted", "rejected"] as const;
 export type AoDecision = (typeof AO_DECISIONS)[number];
 
+/** eMASS-style residual levels. Empty string means not yet set. */
+export const RISK_LEVELS = ["very_low", "low", "moderate", "high", "very_high"] as const;
+export type RiskLevel = (typeof RISK_LEVELS)[number];
+
+export type PoamEntry = {
+  task: string;
+  owner: string;
+  resources: string;
+  milestone: string;
+  scheduled_date: string;
+  residual_risk_level: RiskLevel | "";
+};
+
 export const NIST_AI_RMF = ["Govern", "Map", "Measure", "Manage"] as const;
 export type NistAiRmf = (typeof NIST_AI_RMF)[number];
 
@@ -53,6 +66,8 @@ export type ChecklistItemState = {
   status: ItemStatus;
   evidence_refs: EvidenceRef[];
   notes: string;
+  /** Present only for partial/gap rows the assembler has scheduled. Omitted when empty. */
+  poam?: PoamEntry;
 };
 
 export type Evaluation = {

@@ -4,6 +4,7 @@ import {
   AUTHOR_ROLES,
   EVENT_TYPES,
   ITEM_STATUSES,
+  RISK_LEVELS,
   SUPPORTED_SCHEMA_VERSIONS,
 } from "./types";
 
@@ -18,12 +19,24 @@ const evidenceRef = z
   })
   .strict();
 
+const poam = z
+  .object({
+    task: z.string().optional(),
+    owner: z.string().optional(),
+    resources: z.string().optional(),
+    milestone: z.string().optional(),
+    scheduled_date: z.string().optional(),
+    residual_risk_level: z.union([z.literal(""), z.enum(RISK_LEVELS)]).optional(),
+  })
+  .strict();
+
 const item = z
   .object({
     req_id: z.string().min(1),
     status: z.enum(ITEM_STATUSES),
     evidence_refs: z.array(evidenceRef).optional(),
     notes: z.string().optional(),
+    poam: poam.optional(),
   })
   .strict();
 

@@ -118,6 +118,7 @@ export function bumpFromBaseline(prior: EvidencePack): EvidencePack {
             .filter(Boolean)
             .join(" ")
         : `Prior status ${item.status}. Re-assess for new model version.`,
+      ...(isInfra && item.poam ? { poam: structuredClone(item.poam) } : {}),
     };
   });
   return next;

@@ -22,6 +22,8 @@ export function renderReadmeTxt(pack: EvidencePack): string {
     "  pack.md            AO-facing narrative",
     "  brief.md           twenty-minute AO read",
     "  status.md          present / partial / gapped / unfinished",
+    "  poam.md            POA&M for partial and gap items",
+    "  poam.csv           same rows for host eMASS transcription",
     "  pack.json          machine record (schema 0.3.0)",
     "  pack.sha256        canonical hash of pack.json",
     "  evidence.sha256    sha256 of evidence/* bytes",

@@ -1,11 +1,15 @@
 import { CHECKLIST } from "./checklist";
 import { createBlankPack } from "./pack-factory";
+import { compactPoam, emptyPoam } from "./poam";
 import {
+  RISK_LEVELS,
   SCHEMA_VERSION,
   SUPPORTED_SCHEMA_VERSIONS,
   type ChecklistItemState,
   type EvidencePack,
   type ItemStatus,
+  type PoamEntry,
+  type RiskLevel,
 } from "./types";
 
 const STATUSES = new Set<ItemStatus>(["pending", "met", "partial", "gap", "na"]);
@@ -20,6 +24,22 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 
 function str(value: unknown, fallback = ""): string {
   return typeof value === "string" ? value : fallback;
+}
+
+function parsePoam(raw: unknown): PoamEntry | undefined {
+  const rec = asRecord(raw);
+  if (!rec) return undefined;
+  const level = str(rec.residual_risk_level);
+  const entry = compactPoam({
+    ...emptyPoam(),
+    task: str(rec.task),
+    owner: str(rec.owner),
+    resources: str(rec.resources),
+    milestone: str(rec.milestone),
+    scheduled_date: str(rec.scheduled_date),
+    residual_risk_level: RISK_LEVELS.includes(level as RiskLevel) ? (level as RiskLevel) : "",
+  });
+  return entry;
 }
 
 function mergeItems(raw: unknown): ChecklistItemState[] {
@@ -46,7 +66,14 @@ function mergeItems(raw: unknown): ChecklistItemState[] {
             })
             .filter((r): r is NonNullable<typeof r> => r !== null)
         : [];
-      byId.set(req_id, { req_id, status, evidence_refs: refs, notes: str(rec.notes) });
+      const poam = parsePoam(rec.poam);
+      byId.set(req_id, {
+        req_id,
+        status,
+        evidence_refs: refs,
+        notes: str(rec.notes),
+        ...(poam ? { poam } : {}),
+      });
     }
   }
   return CHECKLIST.map((def) => byId.get(def.req_id) ?? {
