@@ -30,3 +30,7 @@ jobs:
           test $? -eq 1
           npm run ao-pack -- verify examples/conformance/unsealed.json
           test $? -eq 1
+          npm run ao-pack -- verify examples/conformance/pem-in-notes.json
+          test $? -eq 1
+          npm run ao-pack -- verify examples/conformance/weights-filename.json
+          test $? -eq 1

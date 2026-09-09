@@ -72,6 +72,16 @@ test("conformance fixtures fail as documented", async () => {
   const unsealedResult = await verifyArtifact(unsealed);
   assert.equal(unsealedResult.ok, false);
   assert.ok(unsealedResult.findings.some((f) => f.code === "CHAIN_UNSEALED"));
+
+  const pem = loadPackArtifact("examples/conformance/pem-in-notes.json");
+  const pemResult = await verifyArtifact(pem);
+  assert.equal(pemResult.ok, false);
+  assert.ok(pemResult.findings.some((f) => f.code === "PEM_KEY"));
+
+  const weights = loadPackArtifact("examples/conformance/weights-filename.json");
+  const weightsResult = await verifyArtifact(weights);
+  assert.equal(weightsResult.ok, false);
+  assert.ok(weightsResult.findings.some((f) => f.code === "WEIGHTS"));
 });
 
 test("tampered pack.sha256 fails verify", async () => {

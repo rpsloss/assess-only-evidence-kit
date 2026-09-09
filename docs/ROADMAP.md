@@ -12,7 +12,7 @@ A pack is an **attestation about a model lifecycle event**, bound to a model art
 
 1. **Keep zip sidecars authoritative.** `pack.sha256` and `evidence.sha256` are the in-toto-style materials list. Do not silently Deflate; STORE keeps bytes obvious.
 2. **Conformance fixtures.** `examples/conformance/` locks failure modes (schema extra keys, banned marking, unsealed chain). Add more: PEM, weights filename, broken evidence hash.
-3. **CI on every push.** Recipe is `docs/ci/protocol.yml`. Copy it to `.github/workflows/` once a token with `workflow` scope is available. `npm test` plus `ao-pack verify` / `chain` / `zip` round-trip is how a 10-year format stays honest.
+3. **CI on every push.** `.github/workflows/protocol.yml` (mirrored in `docs/ci/`). `npm test` plus `ao-pack verify` / `chain` / `zip` round-trip is how a 10-year format stays honest.
 4. **Optional `files[].sha256` in a later schema** so the machine record itself names attachment digests. Until then the zip sidecar is enough and does not require a `$id` bump.
 
 ## Do later (new schema or detached files)

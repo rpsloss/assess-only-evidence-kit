@@ -23,7 +23,7 @@ Quoted doctrine (paraphrase kept close to public text):
 | INF-CM-01 | Serving-stack configuration / least functionality | Config control; Container SRG | CM-7; §3.1.3; §3.1.5 | CM-7, CM-3, CM-8 | Map, Manage |
 | INF-SEG-01 | Segmentation of training and serving | Flow enforcement; air-gap language | AC-4; §3.1.3 segmentation | AC-4, SC-7, AC-17 | Map, Govern |
 | INF-INT-01 | Integrity of stored model artifacts | SI-7 integrity | §3.1.3 SI-7 | SI-7, SC-13, AU-10 | Measure, Manage |
-| INF-SBOM-01 | SBOM / component inventory | OMB M-22-18 SBOM as Assess-Only evidence | §3.1.3; CM-8 | CM-8, SA-4, SR-4 | Map, Govern |
+| INF-SBOM-01 | SBOM / component inventory | OMB M-22-18 SBOM as Assess-Only evidence. Point at a CycloneDX ML-BOM or CISA SBOM-for-AI ingredients list; do not embed the BOM in the pack. | §3.1.3; CM-8 | CM-8, SA-4, SR-4 | Map, Govern |
 | INF-MON-01 | Platform ConMon covers model runtime | CA-7; cATO composition | Table 4-2 CA-7 / CA-7(3) / RA-5 | CA-7, CA-7(3), RA-5, SI-4 | Measure, Manage |
 | INF-IR-01 | Incident monitoring for model-specific events | IR-5; monitoring threat vectors | Table 4-2 IR-5; Table 4-1 | IR-5, IR-4, IR-6 | Manage |
 | INF-SR-01 | Supply chain of hosting/serving components | SCRM | SR-2/3/6; RA-3(1) | SR-2, SR-3, SR-6, RA-3(1) | Govern, Map |

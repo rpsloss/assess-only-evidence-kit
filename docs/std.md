@@ -41,7 +41,7 @@ AI models do **not** receive standalone ATOs. Under the DoD AI Cybersecurity RM 
 1. Checklist generator from Tailoring Guide Appendix B–style requirement buckets (infra + model)  
 2. Evidence pack schema (JSON + human markdown export) for **one** event type: `model_version_bump`  
 3. Threshold stub: performance + data-drift fields the AO negotiates once  
-4. Local web form: fill → emit zip (`pack.md`, `pack.json`, `gap_report.md`, `/evidence`, schema)
+4. Local web form / CLI: fill → emit zip (`pack.md`, `brief.md`, `pack.json`, `pack.sha256`, `evidence.sha256`, `gap_report.md`, `/evidence`, schema)
 
 **Out:** Multi-tenant SaaS, eMASS API write, classified networks, automated model eval runners, multi-agent / MCP-specific overlays (note as future)
 

@@ -1,0 +1,329 @@
+{
+  "schema_version": "0.3.0",
+  "pack_id": "pck_pem",
+  "revision": 1,
+  "created_at": "2026-01-15T00:00:00.000Z",
+  "updated_at": "2026-01-15T00:00:00.000Z",
+  "author_role": "cybersecurity_engineer",
+  "author_name": "Sample operator",
+  "marking": "UNCLASSIFIED",
+  "system_context": {
+    "system_name": "Host Enclave PLATFORM-ALPHA (placeholder)",
+    "ato_id_or_ref": "ATO-PLACEHOLDER-2025-0412",
+    "boundary_notes": "Authorization boundary is the host enclave. The classifier is incorporated as technology below the system level. This pack is not an ATO.",
+    "environment_notes": "Placeholder IL/enclave. Sanitized. No real customer or contract names."
+  },
+  "model": {
+    "name": "doc-route-clf",
+    "task": "supervised_classifier",
+    "prior_version": "1.1.0",
+    "version": "1.2.0",
+    "artifact_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "hash_alg": "sha256",
+    "training_data_provenance_ref": "uri://catalog/datasets/doc-route-v3/data-card",
+    "catalog_uri": "uri://catalog/models/doc-route-clf/1.2.0"
+  },
+  "event": {
+    "type": "model_version_bump",
+    "rationale": "Genesis sample for 1.2.0. Unclassified placeholder.",
+    "change_summary": "Initial Assess-Only pack in this chain."
+  },
+  "appendix_b_items": [
+    {
+      "req_id": "INF-BND-01",
+      "status": "met",
+      "notes": "-----BEGIN PRIVATE KEY-----\nMIIB",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_bk41oa",
+          "kind": "uri",
+          "value": "uri://host/ato/ATO-PLACEHOLDER-2025-0412",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "INF-AC-01",
+      "status": "met",
+      "notes": "Promotion pipeline identity `mlops-promote` is the only principal that can overwrite catalog tags. Weights are not world-readable. Break-glass is ISSM-approved.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_z4mb9t",
+          "kind": "uri",
+          "value": "uri://host/rbac/model-catalog",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "INF-AU-01",
+      "status": "met",
+      "notes": "Catalog pull, tag promote, and serving-config change events ship to the host SIEM. Retention follows the host ATO package.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_0iqsh6",
+          "kind": "uri",
+          "value": "uri://host/siem/model-lifecycle",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "INF-CM-01",
+      "status": "met",
+      "notes": "Serving image digest pinned in the release manifest. Unused debug ports remain closed. Change ticket bound to this bump.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_llgrbx",
+          "kind": "uri",
+          "value": "uri://host/cm/doc-route-clf-1.3.0",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "INF-SEG-01",
+      "status": "met",
+      "notes": "No new flows. Training remains on the isolated build enclave; serving stays on the existing inference VLAN.",
+      "evidence_refs": []
+    },
+    {
+      "req_id": "INF-INT-01",
+      "status": "met",
+      "notes": "sha256 digest recorded in hash-manifest.txt. Catalog tag is immutable.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_nvkuul",
+          "kind": "file",
+          "value": "hash-manifest.txt",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "INF-SBOM-01",
+      "status": "partial",
+      "notes": "Serving-stack CycloneDX exists. Model-artifact SBOM is a gap pending generator enablement.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_l999af",
+          "kind": "uri",
+          "value": "uri://host/sbom/serving-stack",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "INF-MON-01",
+      "status": "met",
+      "notes": "Host ConMon job `clf-runtime` covers availability, CPU/GPU saturation, and 5xx rate. Model treated as a versioned pipeline artifact.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_otuq89",
+          "kind": "uri",
+          "value": "uri://host/conmon/clf-runtime",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "INF-IR-01",
+      "status": "partial",
+      "notes": "Generic IR playbook exists. Model-specific extraction/evasion tabletop is scheduled, not yet executed.",
+      "evidence_refs": []
+    },
+    {
+      "req_id": "INF-SR-01",
+      "status": "met",
+      "notes": "Runtime and accelerator suppliers are inherited from the host SCRM package. No new third-party weights.",
+      "evidence_refs": []
+    },
+    {
+      "req_id": "MDL-ID-01",
+      "status": "met",
+      "notes": "doc-route-clf 1.2.0 \u2192 1.3.0. Artifact hash in pack identity and hash-manifest.txt.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_47vi71",
+          "kind": "file",
+          "value": "hash-manifest.txt",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "MDL-PROV-01",
+      "status": "met",
+      "notes": "Training set is the internal document-routing corpus v3. Data card and dataset hash are in the catalog. No raw training data in this pack.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_cdaccx",
+          "kind": "uri",
+          "value": "uri://catalog/datasets/doc-route-v3/data-card",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "MDL-POIS-01",
+      "status": "partial",
+      "notes": "Dataset pinned. Intake review exists. Canary/holdout against label-flip is documented as a residual gap.",
+      "evidence_refs": []
+    },
+    {
+      "req_id": "MDL-EVAL-01",
+      "status": "met",
+      "notes": "Holdout F1 0.91 against proposed F1 >= 0.88. AO has not yet accepted the threshold. See eval-holdout-v13.txt.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_nq0kml",
+          "kind": "file",
+          "value": "eval-holdout-v13.txt",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "MDL-DRIFT-01",
+      "status": "partial",
+      "notes": "Proposed PSI <= 0.2 and F1 >= 0.88. Marked not-negotiated. Re-assess trigger: two consecutive weekly jobs below F1 0.88.",
+      "evidence_refs": []
+    },
+    {
+      "req_id": "MDL-ADV-01",
+      "status": "gap",
+      "notes": "No adversarial/evasion suite was run for 1.3.0. Residual risk recorded for AO review.",
+      "evidence_refs": []
+    },
+    {
+      "req_id": "MDL-EXT-01",
+      "status": "gap",
+      "notes": "Inference API is internal-only with rate limits, but extraction/inversion tests were not performed.",
+      "evidence_refs": []
+    },
+    {
+      "req_id": "MDL-CFG-01",
+      "status": "met",
+      "notes": "Preprocessor and decision threshold pinned in the serving config manifest for 1.3.0.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_a83ih6",
+          "kind": "uri",
+          "value": "uri://host/cm/doc-route-clf-1.3.0/serving.json",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "MDL-REPO-01",
+      "status": "met",
+      "notes": "Stored in the host model catalog, not a share drive.",
+      "evidence_refs": [
+        {
+          "id": "ref_mttmfliw_i7akdx",
+          "kind": "uri",
+          "value": "uri://catalog/models/doc-route-clf/1.3.0",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "req_id": "MDL-PII-01",
+      "status": "na",
+      "notes": "Document-routing corpus is business records without PII by data-card assertion. N/A with documented no-PII statement.",
+      "evidence_refs": []
+    },
+    {
+      "req_id": "MDL-OUT-01",
+      "status": "partial",
+      "notes": "Responses are class labels plus confidence only. No free-text generation. Additional output-filter monitor not yet wired.",
+      "evidence_refs": []
+    },
+    {
+      "req_id": "MDL-PKG-01",
+      "status": "partial",
+      "notes": "This pack is the Assess-Only body of evidence for the bump. It is not an ATO. Host ISSM will attach the zip to the authorization package if the AO accepts residual risk.",
+      "evidence_refs": []
+    }
+  ],
+  "evaluations": [
+    {
+      "id": "eval_prior_holdout",
+      "name": "Holdout v2 test split",
+      "dataset_ref": "uri://catalog/datasets/doc-route-v2/splits/test",
+      "metrics": {
+        "F1": "0.87",
+        "precision": "0.85",
+        "recall": "0.89"
+      },
+      "passed": true,
+      "raw_artifact_uri": "eval-holdout-v12.txt"
+    }
+  ],
+  "thresholds": {
+    "negotiated": false,
+    "performance": [
+      {
+        "metric": "F1",
+        "operator": ">=",
+        "value": "0.88",
+        "unit": ""
+      },
+      {
+        "metric": "precision",
+        "operator": ">=",
+        "value": "0.86",
+        "unit": ""
+      }
+    ],
+    "drift": [
+      {
+        "metric": "PSI",
+        "operator": "<=",
+        "value": "0.2",
+        "method": "population_stability_index"
+      }
+    ],
+    "reauth_trigger_notes": "Two consecutive weekly holdout jobs below F1 0.88, or a serving-stack change, triggers re-assess of this pack."
+  },
+  "residual_risk": {
+    "statement": "Primary residual risk is unevaluated evasion and extraction against an internal-only classifier API. SBOM for the model artifact is incomplete. Thresholds are proposed, not AO-accepted. This pack does not grant authorization.",
+    "mitigations": [
+      "Keep inference on the existing internal VLAN with rate limits.",
+      "Schedule evasion/extraction tests before expanding the interface.",
+      "Complete model-artifact SBOM on the next bump."
+    ],
+    "ao_decision": "pending",
+    "ao_decision_notes": ""
+  },
+  "conmon_hooks": {
+    "what_is_monitored": "Availability, 5xx, resource saturation, weekly holdout F1, PSI on incoming document mix.",
+    "alert_owner": "Host ISSM / MLOps on-call (placeholder roles)",
+    "log_source_refs": [
+      "uri://host/siem/model-lifecycle",
+      "uri://host/conmon/clf-runtime"
+    ],
+    "cadence_notes": "Runtime alerts continuous; holdout job weekly; PSI weekly."
+  },
+  "chain": {
+    "prior_pack_id": null,
+    "prior_pack_hash": null
+  },
+  "baseline_pack_id": null,
+  "files": [
+    {
+      "id": "file_mttmfliw_arr9y7",
+      "filename": "hash-manifest.txt",
+      "mime": "text/plain",
+      "size_bytes": 0,
+      "data_base64": ""
+    },
+    {
+      "id": "file_mttmfliw_x1fh7d",
+      "filename": "eval-holdout-v13.txt",
+      "mime": "text/plain",
+      "size_bytes": 0,
+      "data_base64": ""
+    }
+  ]
+}

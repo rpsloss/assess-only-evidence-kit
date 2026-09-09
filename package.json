@@ -1,6 +1,9 @@
 {
   "name": "assess-only-evidence-kit",
   "private": true,
+  "engines": {
+    "node": ">=20"
+  },
   "bin": {
     "ao-pack": "bin/ao-pack.mjs"
   },
