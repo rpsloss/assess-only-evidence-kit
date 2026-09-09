@@ -1,5 +1,10 @@
 # Protocol changelog
 
+## 0.3.1 (draft SAR)
+
+- `ao-pack sar` and zip `sar.md`: 22 overlay findings and recommendations for the host SCA.
+- `controls.csv`: req_id to indicative 800-53 / NIST AI RMF themes (not a claim those controls were assessed).
+
 ## 0.3.1 (evidence requests)
 
 - `ao-pack requests` and zip `requests.md`: derived asks for ISSM, MLOps, and model owner.

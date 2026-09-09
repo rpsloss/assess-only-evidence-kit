@@ -69,7 +69,7 @@ export function renderBrief(pack: EvidencePack, diff?: PackDiff | null, packHash
     ``,
     evals.join("\n") || "_None._",
     ``,
-    `See **status.md** for the scan board, **poam.md** for POA&M, **requests.md** for ISSM/MLOps/model-owner asks, **host_package.md** for where this zip attaches.`,
+    `See **status.md** (board), **sar.md** (draft findings), **poam.md** (POA&M), **requests.md** (asks), **host_package.md** (where to attach).`,
     ``,
     `## Open items (gap / partial / pending)`,
     ``,

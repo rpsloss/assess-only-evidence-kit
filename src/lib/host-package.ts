@@ -37,7 +37,7 @@ export function renderHostPackageMarkdown(pack: EvidencePack): string {
     ``,
     `1. Do **not** open a new ATO for the model.`,
     `2. Upload the zip as supporting evidence under the host record in eMASS (or the Component equivalent).`,
-    `3. Point the AO determination brief at \`status.md\`, \`brief.md\`, \`poam.md\`, and this page.`,
+    `3. Point the AO determination brief at \`status.md\`, \`brief.md\`, \`sar.md\`, \`poam.md\`, and this page.`,
     `4. Transcribe \`poam.csv\` into the host POA&M if Component process requires eMASS rows.`,
     `5. Treat INF-* as host-layer / common-control themes. Treat MDL-* as this event.`,
     ``,

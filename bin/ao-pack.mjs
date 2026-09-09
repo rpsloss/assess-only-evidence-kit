@@ -11,6 +11,7 @@ import { sealChain } from "../src/lib/pack-factory.ts";
 import { renderHostPackageMarkdown } from "../src/lib/host-package.ts";
 import { renderPoamMarkdown } from "../src/lib/poam.ts";
 import { renderRequestsMarkdown } from "../src/lib/requests.ts";
+import { renderSarMarkdown } from "../src/lib/sar.ts";
 import { renderStatusMarkdown } from "../src/lib/status-board.ts";
 import { renderVerify, verifyArtifact } from "../src/lib/verify-pack.ts";
 
@@ -23,6 +24,7 @@ function usage() {
   npm run ao-pack -- poam <pack.json|zip>
   npm run ao-pack -- host <pack.json|zip>
   npm run ao-pack -- requests <pack.json|zip>
+  npm run ao-pack -- sar <pack.json|zip>
   npm run ao-pack -- brief <pack.json|zip> [prior.json|zip]
   npm run ao-pack -- zip <pack.json|zip> [-o out.zip]
   npm run ao-pack -- seal <prior> <next> [-o out.json]
@@ -48,6 +50,8 @@ if (cmd === "hash" && args[1]) {
   process.stdout.write(renderHostPackageMarkdown(loadPackFromPath(args[1])));
 } else if (cmd === "requests" && args[1]) {
   process.stdout.write(renderRequestsMarkdown(loadPackFromPath(args[1])));
+} else if (cmd === "sar" && args[1]) {
+  process.stdout.write(renderSarMarkdown(loadPackFromPath(args[1])));
 } else if (cmd === "inspect" && args[1]) {
   const artifact = loadPackArtifact(args[1]);
   process.stdout.write(await renderInspect(artifact));

@@ -5,6 +5,7 @@ import { hashPack } from "@/lib/canonical";
 import { CHECKLIST, itemsForLayer } from "@/lib/checklist";
 import { compactPoam, collectPoamRows, emptyPoam, renderPoamCsv, renderPoamMarkdown } from "@/lib/poam";
 import { collectRequests, renderRequestsMarkdown, type Ask } from "@/lib/requests";
+import { renderSarMarkdown } from "@/lib/sar";
 import { completeness, layerLabel, statusLabel } from "@/lib/completeness";
 import { downloadPackZip, downloadSingle, packJson } from "@/lib/export";
 import { renderGapReport, renderPackMarkdown } from "@/lib/markdown";
@@ -146,6 +147,12 @@ export function PackEditor({ pack }: { pack: EvidencePack }) {
             onClick={() => downloadSingle("requests.md", renderRequestsMarkdown(pack), "text/markdown")}
           >
             requests.md
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => downloadSingle("sar.md", renderSarMarkdown(pack), "text/markdown")}
+          >
+            sar.md
           </Button>
           <Button variant="outline" onClick={() => downloadSingle("gap_report.md", renderGapReport(pack), "text/markdown")}>
             gap_report.md

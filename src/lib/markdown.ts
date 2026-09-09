@@ -24,6 +24,8 @@ export function renderReadmeTxt(pack: EvidencePack): string {
     "  status.md          present / partial / gapped / unfinished",
     "  host_package.md    where this zip goes in the host A&A package",
     "  requests.md        asks for ISSM / MLOps / model owner",
+    "  sar.md             draft SAR findings for the host SCA",
+    "  controls.csv       req_id to indicative 800-53 themes",
     "  poam.md            POA&M for partial and gap items",
     "  poam.csv           same rows for host eMASS transcription",
     "  pack.json          machine record (schema 0.3.0)",

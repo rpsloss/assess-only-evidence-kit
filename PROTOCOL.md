@@ -38,6 +38,8 @@ brief.md             twenty-minute AO read (includes canonical hash)
 status.md            present / partial / gapped / unfinished; inherited vs this event
 host_package.md      where this zip goes in the host A&A package
 requests.md          ISSM / MLOps / model-owner asks
+sar.md               draft SAR findings for the host SCA
+controls.csv         req_id → indicative 800-53 / AI RMF themes
 poam.md              POA&M for partial and gap (host-package insert)
 poam.csv             same rows, spreadsheet/eMASS transcription
 pack.json            machine record (schema 0.3.0)
@@ -67,6 +69,7 @@ npm run ao-pack -- status <pack.json|zip>
 npm run ao-pack -- poam <pack.json|zip>
 npm run ao-pack -- host <pack.json|zip>
 npm run ao-pack -- requests <pack.json|zip>
+npm run ao-pack -- sar <pack.json|zip>
 npm run ao-pack -- brief <pack.json|zip> [prior]
 npm run ao-pack -- zip <pack.json|zip> [-o out.zip]
 npm run ao-pack -- seal <prior> <next> [-o out.json]
@@ -80,6 +83,7 @@ npm run ao-pack -- chain <p1> <p2> [p3...]
 - **poam** — Plan of Action and Milestones from partial and gap items.
 - **host** — drop-in page for the host authorization package.
 - **requests** — open asks for ISSM / MLOps / model owner.
+- **sar** — draft Security Assessment Report findings for the host SCA.
 - **zip** — emit a STORE archive with the layout above.
 - **seal** — write `chain.prior_pack_hash` from the canonical hash of prior.
 - **brief** — twenty-minute AO read (identity, evals, open items, residual risk, optional diff).
