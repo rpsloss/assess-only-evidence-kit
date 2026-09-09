@@ -1,5 +1,10 @@
 # Protocol changelog
 
+## 0.3.1 (evidence requests)
+
+- `ao-pack requests` and zip `requests.md`: derived asks for ISSM, MLOps, and model owner.
+- Workbench **Requests** tab; blocking asks gate ready-for-AO/SCA.
+
 ## 0.3.1 (inheritance + host drop-in)
 
 - Bump stamps `inherited_from` on INF-* items. Status board and `status.md` show inherited vs this event.

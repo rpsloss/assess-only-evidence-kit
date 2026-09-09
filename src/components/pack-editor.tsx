@@ -4,6 +4,7 @@ import { renderBrief } from "@/lib/brief-pack";
 import { hashPack } from "@/lib/canonical";
 import { CHECKLIST, itemsForLayer } from "@/lib/checklist";
 import { compactPoam, collectPoamRows, emptyPoam, renderPoamCsv, renderPoamMarkdown } from "@/lib/poam";
+import { collectRequests, renderRequestsMarkdown, type Ask } from "@/lib/requests";
 import { completeness, layerLabel, statusLabel } from "@/lib/completeness";
 import { downloadPackZip, downloadSingle, packJson } from "@/lib/export";
 import { renderGapReport, renderPackMarkdown } from "@/lib/markdown";
@@ -32,7 +33,15 @@ import { Label } from "./ui/label";
 import { Textarea } from "./ui/textarea";
 
 const MAX_FILE_BYTES = 400 * 1024;
-type Tab = "identity" | "checklist" | "evaluations" | "thresholds" | "residual" | "poam" | "files";
+type Tab =
+  | "identity"
+  | "checklist"
+  | "evaluations"
+  | "thresholds"
+  | "residual"
+  | "poam"
+  | "requests"
+  | "files";
 
 export function PackEditor({ pack }: { pack: EvidencePack }) {
   const navigate = useNavigate();
@@ -132,6 +141,12 @@ export function PackEditor({ pack }: { pack: EvidencePack }) {
           >
             poam.md
           </Button>
+          <Button
+            variant="outline"
+            onClick={() => downloadSingle("requests.md", renderRequestsMarkdown(pack), "text/markdown")}
+          >
+            requests.md
+          </Button>
           <Button variant="outline" onClick={() => downloadSingle("gap_report.md", renderGapReport(pack), "text/markdown")}>
             gap_report.md
           </Button>
@@ -182,6 +197,7 @@ export function PackEditor({ pack }: { pack: EvidencePack }) {
             ["thresholds", "Thresholds"],
             ["residual", "Residual & ConMon"],
             ["poam", "POA&M"],
+            ["requests", "Requests"],
             ["files", "Files"],
           ] as const
         ).map(([id, label]) => (
@@ -210,6 +226,24 @@ export function PackEditor({ pack }: { pack: EvidencePack }) {
       {tab === "thresholds" && <ThresholdsTab pack={pack} patch={patch} />}
       {tab === "residual" && <ResidualTab pack={pack} patch={patch} />}
       {tab === "poam" && <PoamTab pack={pack} patch={patch} />}
+      {tab === "requests" && (
+        <RequestsTab
+          pack={pack}
+          onJump={(ask) => {
+            const item = ask.id.match(/item:(INF-[A-Z0-9-]+|MDL-[A-Z0-9-]+)/);
+            if (item) {
+              setFocusReqId(item[1]!);
+              setLayer(item[1]!.startsWith("INF") ? "infra" : "model");
+              setTab("checklist");
+              return;
+            }
+            if (ask.pointer.startsWith("evaluations")) setTab("evaluations");
+            else if (ask.pointer.startsWith("thresholds")) setTab("thresholds");
+            else if (ask.pointer.startsWith("residual") || ask.pointer.startsWith("conmon")) setTab("residual");
+            else setTab("identity");
+          }}
+        />
+      )}
       {tab === "files" && <FilesTab pack={pack} patch={patch} />}
 
       <div className="flex justify-end pt-4 border-t border-rule">
@@ -897,6 +931,63 @@ function PoamTab({
               </Field>
             </div>
           </article>
+        );
+      })}
+    </div>
+  );
+}
+
+function RequestsTab({
+  pack,
+  onJump,
+}: {
+  pack: EvidencePack;
+  onJump: (ask: Ask) => void;
+}) {
+  const asks = collectRequests(pack);
+  const blocking = asks.filter((a) => a.blocking);
+  const roles: Ask["role"][] = ["ISSM", "mlops", "model_owner"];
+  if (asks.length === 0) {
+    return (
+      <p className="text-sm text-fg-muted max-w-2xl">
+        No open asks. Identity, evals, and overlay items have enough for you to download the pack for
+        AO/SCA.
+      </p>
+    );
+  }
+  return (
+    <div className="grid gap-4">
+      <p className="text-sm text-fg-muted max-w-3xl">
+        Send this list (or <code>requests.md</code> in the zip) to MLOps and the model owner. They return
+        URI pointers and unclassified summaries — not weights, keys, or CUI. {blocking.length} blocking
+        ask{blocking.length === 1 ? "" : "s"} before ready for AO/SCA.
+      </p>
+      {roles.map((role) => {
+        const rows = asks.filter((a) => a.role === role);
+        if (rows.length === 0) return null;
+        return (
+          <section key={role} className="grid gap-2">
+            <h2 className="font-serif text-xl">{role}</h2>
+            <ul className="grid gap-2">
+              {rows.map((ask) => (
+                <li key={ask.id}>
+                  <button
+                    type="button"
+                    className="w-full text-left rounded-lg border border-rule bg-white px-4 py-3 hover:border-accent"
+                    onClick={() => onJump(ask)}
+                  >
+                    <div className="flex flex-wrap gap-2 items-baseline justify-between">
+                      <span className="font-medium">{ask.title}</span>
+                      <span className={ask.blocking ? "text-xs text-gap" : "text-xs text-fg-muted"}>
+                        {ask.blocking ? "blocking" : "info"}
+                      </span>
+                    </div>
+                    <p className="text-sm text-fg-muted mt-1">{ask.need}</p>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
         );
       })}
     </div>

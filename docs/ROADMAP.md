@@ -10,7 +10,7 @@ A pack is an **attestation about a model lifecycle event**, bound to a model art
 
 ## Do next (compatible)
 
-1. **Assembler workbench, zip for AO/SCA.** One event at a time. Import last zip, bump (INF inherited, MDL re-opened), fill POA&M, download. `host_package.md` is where the zip attaches.
+1. **Assembler workbench, zip for AO/SCA.** One event at a time. Import last zip, bump, send `requests.md` to MLOps/model owner, fill POA&M, download. `host_package.md` is where the zip attaches.
 2. **Keep zip sidecars authoritative.** `pack.sha256` and `evidence.sha256` are the in-toto-style materials list. Do not silently Deflate; STORE keeps bytes obvious.
 3. **Conformance fixtures.** `examples/conformance/` locks failure modes. Add more as verify grows.
 4. **CI on every push.** `.github/workflows/protocol.yml` (mirrored in `docs/ci/`).

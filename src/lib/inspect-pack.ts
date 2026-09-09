@@ -2,6 +2,7 @@ import { hashPack } from "./canonical";
 import { completeness } from "./completeness";
 import type { PackArtifact } from "./load-pack";
 import { collectPoamRows } from "./poam";
+import { collectRequests } from "./requests";
 import { statusBoard } from "./status-board";
 import { renderVerify, verifyArtifact } from "./verify-pack";
 
@@ -10,6 +11,7 @@ export async function renderInspect(artifact: PackArtifact): Promise<string> {
   const digest = await hashPack(artifact.pack);
   const c = completeness(artifact.pack);
   const board = statusBoard(artifact.pack);
+  const asks = collectRequests(artifact.pack);
   const verify = await verifyArtifact(artifact);
   const layout = artifact.zip
     ? [...artifact.zip.keys()]
@@ -31,6 +33,7 @@ export async function renderInspect(artifact: PackArtifact): Promise<string> {
     `| Board | present ${board.counts.present} · partial ${board.counts.partial} · gapped ${board.counts.gapped} · unfinished ${board.counts.unfinished} |`,
     `| POA&M rows | ${collectPoamRows(artifact.pack).length} |`,
     `| Inherited / this event | ${board.inherited.length} / ${board.this_event.length} |`,
+    `| Requests | ${asks.length} (${asks.filter((a) => a.blocking).length} blocking) |`,
     `| Ready for AO/SCA | ${c.export_ready ? "yes" : "no"} |`,
     `| Source | ${artifact.zip ? "zip" : "json"} |`,
     `| Prior | ${artifact.pack.chain.prior_pack_id ?? "genesis"} |`,

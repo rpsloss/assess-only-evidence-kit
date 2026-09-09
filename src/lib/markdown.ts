@@ -23,6 +23,7 @@ export function renderReadmeTxt(pack: EvidencePack): string {
     "  brief.md           twenty-minute AO read",
     "  status.md          present / partial / gapped / unfinished",
     "  host_package.md    where this zip goes in the host A&A package",
+    "  requests.md        asks for ISSM / MLOps / model owner",
     "  poam.md            POA&M for partial and gap items",
     "  poam.csv           same rows for host eMASS transcription",
     "  pack.json          machine record (schema 0.3.0)",
