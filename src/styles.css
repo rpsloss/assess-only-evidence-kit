@@ -1,22 +1,23 @@
+@import "./castleridge-theme.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @theme {
-  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", serif;
-  --font-sans: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
-  --color-paper: #f3efe6;
-  --color-paper-2: #ebe6db;
-  --color-ink: #1c2118;
-  --color-fg: #1c2118;
-  --color-fg-muted: #5d6456;
-  --color-rule: #c9c2b3;
-  --color-banner: #2f4a2c;
-  --color-accent: #3d5c36;
-  --color-accent-2: #c45c26;
-  --color-met: #2f6b3a;
-  --color-partial: #9a6b12;
-  --color-gap: #9b2c2c;
-  --color-pending: #6b7064;
+  --font-serif: "Instrument Serif", Georgia, serif;
+  --font-sans: "Instrument Sans", system-ui, sans-serif;
+  --color-paper: #070708;
+  --color-paper-2: #0d0d0f;
+  --color-ink: #f2efe8;
+  --color-fg: #f2efe8;
+  --color-fg-muted: #9c9890;
+  --color-rule: rgba(242, 239, 232, 0.1);
+  --color-banner: #141416;
+  --color-accent: #d7c4a3;
+  --color-accent-2: #c4a56a;
+  --color-met: #8aa37a;
+  --color-partial: #c4a56a;
+  --color-gap: #c48a80;
+  --color-pending: #6a6660;
 }
 
 html,
@@ -27,9 +28,20 @@ body,
 
 body {
   margin: 0;
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--bg);
+  color: var(--text);
   font-family: var(--font-sans);
+}
+
+@media print {
+  :root {
+    --bg: #f3efe6;
+    --text: #1c2118;
+  }
+  body {
+    background: #f3efe6;
+    color: #1c2118;
+  }
 }
 
 :focus-visible {
