@@ -1,4 +1,4 @@
-# Assess-Only Evidence Kit
+# Assess-Only Kit
 
 **UNCLASSIFIED. Fictional sample. Not a real ATO, not CUI, not connected to eMASS.**
 
